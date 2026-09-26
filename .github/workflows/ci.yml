@@ -1,0 +1,55 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  verify:
+    name: Typecheck, Lint & Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 3. Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: 4. Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: 5. Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 6. Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 7. Verify Node.js Engine Check
+        run: node ./scripts/check-engine.js
+
+      - name: 8. Run TypeScript Typecheck
+        run: pnpm typecheck
+
+      - name: 9. Run ESLint (Static Analysis)
+        run: pnpm lint
+
+      - name: 10. Check Code Formatting (Prettier)
+        run: pnpm format:check

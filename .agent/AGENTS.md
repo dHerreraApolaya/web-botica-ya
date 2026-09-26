@@ -40,3 +40,9 @@ Strict index for any AI Agent operating in this repository.
 - **OWASP Compliance**: Avoid XSS vulnerabilities (`dangerouslySetInnerHTML` is prohibited).
 - **Coverage Requirement**: Ensure new code includes unit tests meeting the **80% minimum coverage** rule.
 - **Scanner Preparedness**: Write code compatible with Fortify, SonarQube, and Xray scanners.
+
+## Commit Message Policy (Conventional Commits)
+
+- All commit messages MUST follow the Conventional Commits specification.
+- Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+- Example: `feat(auth): add login form validation with zod`

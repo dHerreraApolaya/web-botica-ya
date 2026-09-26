@@ -38,3 +38,10 @@
 - **UI Language**: Spanish strictly for user interface text and labels.
 - **No Comments**: Code must be readable and self-documenting without inline code comments.
 - **Strict TypeScript**: Explicit typing required. Usage of `any` is prohibited.
+
+## Responsive Design Policy (Desktop-First with Mobile/Tablet Adaptability)
+
+- **Primary Target:** Web Desktop (1280px+). Design and layout prioritize wide-screen usability.
+- **Adaptability:** All interfaces MUST adapt gracefully to Tablet (768px - 1024px) and Mobile (<768px) views.
+- **Tailwind Strategy:** Use responsive modifiers (`sm:`, `md:`, `lg:`, `xl:`) for fluid layouts. Touch targets MUST be at least 44x44px on mobile screens.
+- **No Overflow Rule:** Horizontal scroll (`overflow-x`) is strictly forbidden on any device viewport.

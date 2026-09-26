@@ -21,3 +21,22 @@ Strict index for any AI Agent operating in this repository.
 - `.specs/`: Feature contracts and specifications.
 - `docs/`: Technical guidelines and design tokens.
 - `src/`: Source code.
+
+## Package Manager Enforcement
+
+- Use **pnpm** exclusively for dependency management.
+- Do NOT run `npm install` or `yarn add`. Always use `pnpm add <package>` or `pnpm install`.
+
+## Environment & Engine Enforcement
+
+- Strictly required: Node.js >= 22.12.0 and pnpm >= 9.0.0.
+- If `pnpm install` fails due to an engine mismatch, DO NOT modify `package.json` or source code.
+- Warn the user to update their local Node environment using `.nvmrc`.
+
+## Security & AppSec Rules (Mandatory)
+
+- Read [`docs/SECURITY.md`](../docs/SECURITY.md) before writing network or state handling logic.
+- **Zero Secrets Policy**: Never generate hardcoded keys or credentials.
+- **OWASP Compliance**: Avoid XSS vulnerabilities (`dangerouslySetInnerHTML` is prohibited).
+- **Coverage Requirement**: Ensure new code includes unit tests meeting the **80% minimum coverage** rule.
+- **Scanner Preparedness**: Write code compatible with Fortify, SonarQube, and Xray scanners.

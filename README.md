@@ -8,15 +8,16 @@ Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Codi
 
 This repository uses a structured documentation architecture. All contributors and AI agents **must consult these documents before proposing or executing code changes**:
 
-| Document                         | Path                                               | Description & Purpose                                                                                                                              |
-| :------------------------------- | :------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AI Master Governance**         | [`.agent/AGENTS.md`](./.agent/AGENTS.md)           | Mandatory governance rules, constraints, package manager rules, engine requirements, and commit conventions.                                       |
-| **Agile Execution Workflow**     | [`.agent/WORKFLOW.md`](./.agent/WORKFLOW.md)       | Step-by-step task execution protocol: Spec inspection, approval gates, and the SDD → BDD → TDD loop.                                               |
-| **Technical Architecture**       | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)   | Feature-First architecture, Clean Architecture, Atomic Design, SOLID/DRY/KISS principles, naming conventions, and desktop-first responsive policy. |
-| **Design System Guidelines**     | [`docs/DESIGN_SYSTEM.md`](./docs/DESIGN_SYSTEM.md) | Atomic design structure (Atoms, Molecules, Organisms, Templates, Screens), design tokens, and UI localization.                                     |
-| **Security & AppSec**            | [`docs/SECURITY.md`](./docs/SECURITY.md)           | Zero secrets policy, Zod environment/payload validation, OWASP mitigations, SAST scanner rules, and 80% test coverage minimum.                     |
-| **Tech Stack & Skills**          | [`docs/SKILLS.md`](./docs/SKILLS.md)               | Approved framework libraries, state management, router, styling utilities, and dependency whitelist.                                               |
-| **Feature Specifications (SDD)** | [`.specs/README.md`](./.specs/README.md)           | Single source of truth for business logic, acceptance criteria, and BDD scenario definitions (`.specs/features/`).                                 |
+| Document                         | Path                                                                             | Description & Purpose                                                                                                                              |
+| :------------------------------- | :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **AI Master Governance**         | [`.agent/AGENTS.md`](./.agent/AGENTS.md)                                         | Mandatory governance rules, constraints, package manager rules, engine requirements, and commit conventions.                                       |
+| **Agile Execution Workflow**     | [`.agent/WORKFLOW.md`](./.agent/WORKFLOW.md)                                     | Step-by-step task execution protocol: Spec inspection, approval gates, and the SDD → BDD → TDD loop.                                               |
+| **Technical Architecture**       | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)                                 | Feature-First architecture, Clean Architecture, Atomic Design, SOLID/DRY/KISS principles, naming conventions, and desktop-first responsive policy. |
+| **Design System Guidelines**     | [`docs/DESIGN_SYSTEM.md`](./docs/DESIGN_SYSTEM.md)                               | Atomic design structure (Atoms, Molecules, Organisms, Templates, Screens), design tokens, and UI localization.                                     |
+| **Security & AppSec**            | [`docs/SECURITY.md`](./docs/SECURITY.md)                                         | Zero secrets policy, Zod environment/payload validation, OWASP mitigations, SAST scanner rules, and 80% test coverage minimum.                     |
+| **Tech Stack & Skills**          | [`docs/SKILLS.md`](./docs/SKILLS.md)                                             | Approved framework libraries, state management, router, styling utilities, and dependency whitelist.                                               |
+| **React & Perf Standards**       | [`rules/react-best-practices/AGENTS.md`](./rules/react-best-practices/AGENTS.md) | Vercel React Best Practices rulebook (40+ performance, bundle size, re-render, and hooks optimization rules for agents).                           |
+| **Feature Specifications (SDD)** | [`.specs/README.md`](./.specs/README.md)                                         | Single source of truth for business logic, acceptance criteria, and BDD scenario definitions (`.specs/features/`).                                 |
 
 ---
 
@@ -74,6 +75,8 @@ web-botica-ya/
 │   ├── SECURITY.md            # AppSec & coverage quality requirements
 │   └── SKILLS.md              # Approved library stack whitelist
 ├── public/                    # Static assets
+├── rules/                     # Engineering and performance rulebooks
+│   └── react-best-practices/  # React performance & optimization standards
 ├── scripts/                   # Tooling and engine verification scripts
 ├── src/                       # Application source code
 │   ├── assets/                # Images, SVGs, and brand assets

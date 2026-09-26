@@ -20,7 +20,14 @@ Strict index for any AI Agent operating in this repository.
 
 - `.specs/`: Feature contracts and specifications.
 - `docs/`: Technical guidelines and design tokens.
+- `rules/`: Engineering rulebooks and performance guidelines.
 - `src/`: Source code.
+
+## Performance & React Standards
+
+- Follow the React best practices defined in [`rules/react-best-practices/AGENTS.md`](../rules/react-best-practices/AGENTS.md).
+- **Vite SPA Scope**: Prioritize client-side rules (Re-render Optimization, Bundle Size, JavaScript Performance, Dynamic Imports via `React.lazy`) and ignore Next.js/RSC server-only rules.
+- **State & Data Fetching**: Use TanStack Query v5 for server state deduplication and Zustand for client state.
 
 ## Package Manager Enforcement
 

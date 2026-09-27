@@ -1,109 +1,146 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   1. MULTI-DIMENSIONAL DESIGN TOKENS (@theme)
+   Tailwind CSS v4 CSS-First Theme Definition
+   ========================================================================== */
+@theme {
+  /* Typography */
+  --font-sans:
+    'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* 8px-Aligned Spacing Scale (Multiples of 4px / 8px) */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-2xl: 2.5rem; /* 40px */
+  --spacing-3xl: 3rem; /* 48px */
+
+  /* Border Radii Scale */
+  --radius-xs: 0.25rem; /* 4px - Badges, Tags, Checkboxes */
+  --radius-sm: 0.375rem; /* 6px - Inputs, Small Buttons */
+  --radius-md: 0.5rem; /* 8px - Cards, Modals, Dropdowns */
+  --radius-lg: 0.75rem; /* 12px - Featured Cards, Promos */
+  --radius-xl: 1rem; /* 16px - Dialogs, Large Banners */
+  --radius-full: 9999px; /* Pills, Circular Avatars, Floating Action Buttons */
+
+  /* Animation Durations & Timing Functions (Motion) */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Depth & Elevation Shadows */
+  --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-floating: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Z-Index Hierarchy Layers */
+  --z-sticky: 20;
+  --z-dropdown: 30;
+  --z-drawer: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+}
+
+/* ==========================================================================
+   2. LIGHT THEME TOKENS (:root)
+   ========================================================================== */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Marca Primaria */
+  --color-primary: #1b8a5a; /* CTAs, Botones Principales, Switches */
+  --color-primary-hover: #156e48; /* Oscurecido un 10% para interacción */
+  --color-primary-contrast: #ffffff; /* Texto sobre el botón primario */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Superficies de Acento derivado */
+  --color-primary-surface: #e3f5ec; /* Cards destacadas, Badges, Banners */
+  --color-primary-surface-text: #13613f; /* Texto oscuro legible sobre el fondo claro */
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Marca Secundaria */
+  --color-secondary: #0284c7; /* Azul Confianza / Salud */
+  --color-secondary-hover: #0369a1;
+  --color-secondary-contrast: #ffffff;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  /* Fondos de Pantalla (Estructura de Capas) */
+  --color-bg-app: #f4f6f5; /* Fondo base de la pantalla */
+  --color-surface: #ffffff; /* Fondo de Tarjetas, Modales, Headers */
+  --color-surface-hover: #eef2ef;
+
+  /* Textos y Bordes */
+  --color-text-main: #0f172a; /* Texto principal (Gris muy oscuro, no negro puro) */
+  --color-text-muted: #64748b; /* Texto secundario / metadatos */
+  --color-border: #e2e8f0; /* Delimitadores limpios */
+
+  /* Accesibilidad y Foco */
+  --color-focus-ring: #1b8a5a; /* Anillo de foco accesible */
+
+  /* Semáforo de Estado */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
+}
+
+/* ==========================================================================
+   3. DARK THEME TOKENS (.dark)
+   ========================================================================== */
+.dark {
+  /* Marca Primaria Adaptada */
+  --color-primary: #22c55e;
+  --color-primary-hover: #16a34a;
+  --color-primary-contrast: #0f172a;
+
+  /* Superficies de Acento derivado */
+  --color-primary-surface: #0d2d1f;
+  --color-primary-surface-text: #86efac;
+
+  /* Marca Secundaria */
+  --color-secondary: #38bdf8;
+  --color-secondary-hover: #0ea5e9;
+  --color-secondary-contrast: #0f172a;
+
+  /* Fondos de Pantalla y Superficies */
+  --color-bg-app: #0b0f17;
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+
+  /* Textos y Bordes */
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-border: #334155;
+
+  /* Accesibilidad y Foco */
+  --color-focus-ring: #22c55e;
+
+  /* Semáforo de Estado */
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-info: #60a5fa;
+}
+
+/* ==========================================================================
+   4. BASE STYLES, RESETS & ACCESSIBILITY
+   ========================================================================== */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-app);
+    color: var(--color-text-main);
+    transition:
+      background-color var(--duration-normal) var(--ease-smooth),
+      color var(--duration-normal) var(--ease-smooth);
   }
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  /* Global Accessible Focus Ring (a11y WCAG Compliance) */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

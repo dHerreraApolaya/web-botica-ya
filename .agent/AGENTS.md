@@ -6,8 +6,9 @@ Strict index for any AI Agent operating in this repository.
 
 1. **Never Assume**: If a requirement is ambiguous, incomplete, or missing technical specs, stop execution and consult the developer.
 2. **Agile & Scoped Execution**: Do not write unrequested features or over-engineer solutions. Stick strictly to the approved task scope.
-3. **No Inline Comments**: Write self-documenting code in English with descriptive naming.
-4. **UI Localization**: Code, variables, and specs in English. User interface text strictly in Spanish.
+3. **Workflow Efficiency (Batch & Verify at the End)**: Strictly follow [`.agent/rules/workflow-efficiency.md`](./rules/workflow-efficiency.md). Author and apply all file modifications first; NEVER run `pnpm typecheck` or `pnpm lint` after every individual edit. Run a single consolidated validation pass at the end of the task.
+4. **No Inline Comments**: Write self-documenting code in English with descriptive naming.
+5. **UI Localization**: Code, variables, and specs in English. User interface text strictly in Spanish.
 
 ## Architectural Principles
 

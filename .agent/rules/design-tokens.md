@@ -12,7 +12,7 @@ This document establishes the mandatory rules for using design system tokens in 
 
 ## 📐 Core Token Dimensions
 
-### 1. Color Palette (OKLCH Color Space)
+### 1. Color Palette (OKLCH & Hex Theme Variables)
 
 Never use arbitrary Tailwind palette colors (e.g. `bg-green-500`, `text-slate-800`, `border-gray-200`). Always use semantic tokens:
 
@@ -35,19 +35,12 @@ Never use arbitrary Tailwind palette colors (e.g. `bg-green-500`, `text-slate-80
 | `text-error` / `bg-error`         | Validation errors, critical notices, destructive actions                                    |
 | `text-info` / `bg-info`           | Informational callouts and guidance hints                                                   |
 
-### 2. Spacing Scale (8px Grid Alignment)
+### 2. Spacing & Container Width Scale (8px Grid Alignment)
 
-All paddings, margins, and layout gaps must align with the 8px vertical/horizontal rhythm:
-
-| Token | CSS Value | Pixel Equivalent | Recommended Use                               |
-| :---- | :-------- | :--------------- | :-------------------------------------------- |
-| `xs`  | `0.25rem` | `4px`            | Micro-spacing, inline badge padding, icon gap |
-| `sm`  | `0.5rem`  | `8px`            | Compact button padding, list item gap         |
-| `md`  | `1rem`    | `16px`           | Standard card padding, form field gap         |
-| `lg`  | `1.5rem`  | `24px`           | Section padding, container gutters            |
-| `xl`  | `2rem`    | `32px`           | Large container padding, hero margins         |
-| `2xl` | `2.5rem`  | `40px`           | Page section spacing                          |
-| `3xl` | `3rem`    | `48px`           | Major layout separations                      |
+- Use standard Tailwind numeric spacing for strict 8px grid alignment:
+  - `p-1` (4px), `p-2` (8px), `p-3` (12px), `p-4` (16px), `p-6` (24px), `p-8` (32px), `p-10` (40px), `p-12` (48px), `p-16` (64px).
+- **Tailwind v4 Rule:** NEVER define `--spacing-2xl` or `--spacing-3xl` in `@theme` as this overrides the universal `max-w-*` scale, causing containers to collapse to tiny pixel widths.
+- Container widths: `max-w-md` (448px), `max-w-lg` (512px), `max-w-xl` (576px), `max-w-2xl` (672px), `max-w-3xl` (768px), `max-w-4xl` (896px), `max-w-5xl` (1024px), `max-w-6xl` (1152px), `max-w-7xl` (1280px).
 
 ### 3. Border Radii Scale
 
@@ -90,6 +83,18 @@ Never write arbitrary z-index utilities like `z-[999]`. Use predefined tokens:
 
 ---
 
+## 🏛️ Architectural Boundaries & Single Responsibility
+
+1. **Global Organisms (`src/components/ui/organisms/`):**
+   - Global navigation components (e.g. `Header.component.tsx`, `Footer.component.tsx`) shared across the entire application.
+2. **Layout Templates (`src/layouts/`):**
+   - Page shell structures (e.g. `MainLayout.layout.tsx`) that wrap global organisms and render dynamic page children (`<main>{children}</main>`).
+3. **Feature Modules (`src/features/<feature>/`):**
+   - Isolated domain logic, feature components (e.g. `HeroSection.component.tsx`), and screens (e.g. `Landing.screen.tsx`).
+   - Do NOT put global navigation elements inside feature-specific component folders.
+
+---
+
 ## 🚫 Enforcement Rules (Zero Exceptions)
 
 1. **NO Hardcoded Palette Colors:**
@@ -101,7 +106,7 @@ Never write arbitrary z-index utilities like `z-[999]`. Use predefined tokens:
 3. **Accessibility Focus Rings (a11y):**
    - Every interactive element (buttons, cards, links, inputs) MUST maintain `:focus-visible` ring behavior using `outline: 2px solid var(--color-focus-ring)`.
 4. **Spacing Rhythm Compliance:**
-   - Margins, paddings, and gaps MUST strictly adhere to the 8px grid (`p-sm`, `p-md`, `p-lg`, `gap-sm`, `gap-md`).
+   - Margins, paddings, and gaps MUST strictly adhere to the 8px grid (`p-2`, `p-4`, `p-6`, `gap-2`, `gap-4`).
 
 ---
 
@@ -120,7 +125,7 @@ Never write arbitrary z-index utilities like `z-[999]`. Use predefined tokens:
 
 ```tsx
 // Compliant: Tokenized semantic utilities, dark-mode native, 8px grid aligned
-<button className="bg-primary text-primary-contrast hover:opacity-90 p-md rounded-radius-md transition-all duration-fast shadow-card focus-visible:outline-2 focus-visible:outline-focus-ring">
+<button className="bg-primary text-primary-contrast hover:bg-primary-hover px-6 py-3 rounded-radius-md transition-all duration-fast shadow-card focus-visible:outline-2 focus-visible:outline-focus-ring">
   Comprar Ahora
 </button>
 ```

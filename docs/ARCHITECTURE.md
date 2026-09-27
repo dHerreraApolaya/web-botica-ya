@@ -22,8 +22,9 @@
 
 ## Naming Conventions
 
-- **Directories (Folders)**: `kebab-case` (e.g., `user-profile`, `components/ui/atoms`).
-- **Components & Screens**: `PascalCase.tsx` / `PascalCase.screen.tsx` (e.g., `Button.tsx`, `Home.screen.tsx`).
+- **Directories (Folders)**: `kebab-case` (e.g., `user-profile`, `components/ui/atoms`, `layouts`).
+- **Components & Screens**: `PascalCase.tsx` / `PascalCase.component.tsx` / `PascalCase.screen.tsx` (e.g., `Button.tsx`, `HeroSection.component.tsx`, `Landing.screen.tsx`).
+- **Layouts**: `PascalCase.layout.tsx` (e.g., `MainLayout.layout.tsx`) located in `src/layouts/`.
 - **Hooks**: `camelCase.hook.ts` starting with `use` (e.g., `useAuth.hook.ts`).
 - **Services**: `camelCase.service.ts` (e.g., `apiClient.service.ts`).
 - **Configs**: `camelCase.config.ts` (e.g., `api.config.ts`).

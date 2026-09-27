@@ -17,9 +17,8 @@
     "jsx": "react-jsx",
 
     /* Alias Configuration */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
 
     /* Strict Flags */

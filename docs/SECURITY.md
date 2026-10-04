@@ -31,6 +31,6 @@ Code generated must comply with static analysis scanners (Fortify, SonarQube, JF
 - **Minimum Unit Test Coverage**: **80%** (Statements, Branches, Functions, Lines).
 - **Enforcement**: CI pipeline will fail automatically if PR coverage falls below 80%.
 - **Core Coverage Targets**:
-  - `src/features/<feature>/utils/`: 100% pure function coverage.
-  - `src/features/<feature>/hooks/`: 90% logic coverage.
+  - `src/features/feature-name/utils/`: 100% pure function coverage.
+  - `src/features/feature-name/hooks/`: 90% logic coverage.
   - `src/components/ui/atoms/`: 100% component render & accessibility coverage.

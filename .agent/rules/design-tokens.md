@@ -89,7 +89,7 @@ Never write arbitrary z-index utilities like `z-[999]`. Use predefined tokens:
    - Global navigation components (e.g. `Header.component.tsx`, `Footer.component.tsx`) shared across the entire application.
 2. **Layout Templates (`src/layouts/`):**
    - Page shell structures (e.g. `MainLayout.layout.tsx`) that wrap global organisms and render dynamic page children (`<main>{children}</main>`).
-3. **Feature Modules (`src/features/<feature>/`):**
+3. **Feature Modules (`src/features/feature-name/`):**
    - Isolated domain logic, feature components (e.g. `HeroSection.component.tsx`), and screens (e.g. `Landing.screen.tsx`).
    - Do NOT put global navigation elements inside feature-specific component folders.
 

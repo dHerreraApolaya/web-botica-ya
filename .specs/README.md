@@ -8,7 +8,7 @@ This directory contains the single source of truth for all business logic, requi
 .specs/
 ├── README.md                  <-- Guidelines and usage (this file)
 └── features/                  <-- Domain specifications
-    └── <feature-name>/
-        ├── <feature-name>.spec.md     <-- Technical & business specs
-        └── <feature-name>.feature     <-- BDD acceptance scenarios
+    └── feature-name/
+        ├── feature-name.spec.md     <-- Technical & business specs
+        └── feature-name.feature     <-- BDD acceptance scenarios
 ```

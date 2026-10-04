@@ -17,7 +17,7 @@
 
 - **Shared (`src/shared/` or `src/components/ui/`)**: Reusable logic and UI elements shared across multiple features. Do not put domain-specific business logic here.
 - **Helpers / Utilities (`*.util.ts` or `*.helper.ts`)**: Must contain strictly **pure functions** (side-effect free, deterministic, no React hooks/state).
-  - Scope: Place feature-specific helpers in `src/features/<feature-name>/utils/`.
+  - Scope: Place feature-specific helpers in `src/features/feature-name/utils/`.
   - Scope: Place global helpers in `src/utils/`.
 
 ## Naming Conventions

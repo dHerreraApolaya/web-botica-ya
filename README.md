@@ -40,15 +40,15 @@ This repository uses a structured documentation architecture. All contributors a
 
 ## 🏛️ Architectural Principles
 
-1. **Feature-First Organization:** Source code is modularized around business capabilities under `src/features/<feature-name>/`.
+1. **Feature-First Organization:** Source code is modularized around business capabilities under `src/features/feature-name/`.
 2. **Atomic Design Hierarchy:**
    - **Atoms (`src/components/ui/atoms/`):** Base UI components (buttons, inputs, typography, icons).
    - **Molecules (`src/components/ui/molecules/`):** Composed atoms (form fields, search bars).
-   - **Organisms (`src/components/ui/organisms/` | `src/features/<feature>/components/`):** Complex UI blocks (headers, navigation, cards).
+   - **Organisms (`src/components/ui/organisms/` | `src/features/feature-name/components/`):** Complex UI blocks (headers, navigation, cards).
    - **Templates (`src/layouts/`):** Page layout skeletons without hardcoded domain data.
-   - **Screens (`src/features/<feature>/screens/`):** Fully connected views with real domain state.
+   - **Screens (`src/features/feature-name/screens/`):** Fully connected views with real domain state.
 3. **Spec-Driven & Test-Driven Development (SDD / TDD / BDD):**
-   - Every feature starts with specification contracts in `.specs/features/<feature>/<feature>.spec.md` and `.feature` files.
+   - Every feature starts with specification contracts in `.specs/features/feature-name/feature-name.spec.md` and `.feature` files.
    - Unit and integration tests must accompany business logic before implementation is considered complete.
 4. **Desktop-First Adaptive Design:**
    - Primary breakpoint is Desktop (1280px+).

@@ -53,3 +53,6 @@ jobs:
 
       - name: 10. Check Code Formatting (Prettier)
         run: pnpm format:check
+
+      - name: 11. Run Product Tests and Coverage Gate
+        run: pnpm test:coverage

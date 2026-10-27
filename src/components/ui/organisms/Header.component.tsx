@@ -1,11 +1,13 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
+import { UserMenu } from '@/features/user/components/UserMenu.component';
 
 export const Header: FC = () => {
   return (
     <header className="sticky top-0 z-sticky w-full border-b border-border bg-surface shadow-subtle">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5 max-md:px-4">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3.5 max-md:px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2.5">
+          <Link to="/" aria-label="Botica Ya, inicio" className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-radius-md bg-primary text-primary-contrast shadow-subtle">
               <svg
                 className="h-6 w-6"
@@ -26,7 +28,7 @@ export const Header: FC = () => {
                 Farmacia Digital
               </span>
             </div>
-          </div>
+          </Link>
 
           <div className="hidden items-center gap-1.5 rounded-radius-full border border-border bg-bg-app px-3.5 py-1 text-xs font-medium text-text-muted lg:flex">
             <svg
@@ -52,7 +54,8 @@ export const Header: FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
+          <UserMenu />
           <button
             type="button"
             className="hidden items-center gap-1.5 rounded-radius-md bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-surface-text transition-all duration-fast hover:opacity-90 sm:inline-flex"

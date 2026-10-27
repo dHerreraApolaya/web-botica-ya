@@ -1,5 +1,7 @@
 # 🚀 Web Botica Ya - Frontend Master Index
 
+Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
+
 ---
 
 ## 📑 Documentation Map & Index

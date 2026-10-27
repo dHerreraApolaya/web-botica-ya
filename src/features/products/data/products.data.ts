@@ -48,6 +48,8 @@ export const LOCAL_PRODUCTS: readonly Product[] = Object.freeze(
       presentation: `Paquete de ${packSize} ${packSize === 1 ? 'unidad' : 'unidades'}`,
       priceInCents: 450 + ((index * 137) % 14500),
       inStock: (index + 1) % 11 !== 0,
+      availableQuantity: (index + 1) % 11 === 0 ? 0 : 5 + (index % 6),
+      requiresPrescription: categoryIndex === 0 && nameIndex === 1,
       isFeatured: index < 12,
     });
   })

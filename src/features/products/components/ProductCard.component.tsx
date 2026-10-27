@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import type { Product } from '../domain/Product';
+import { AddToCart } from '../../sales/components/AddToCart.component';
 
 const PRICE_FORMATTER = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
 
@@ -38,5 +39,6 @@ export const ProductCard: FC<ProductCardProps> = ({ product }) => (
         {product.inStock ? 'Disponible' : 'Agotado'}
       </span>
     </div>
+    <AddToCart product={product} />
   </article>
 );

@@ -12,6 +12,10 @@ export default defineConfig({
       provider: 'v8',
       include: [
         'src/features/products/**/*.{ts,tsx}',
+        'src/features/sales/**/*.{ts,tsx}',
+        'src/components/ui/molecules/CheckoutField.component.tsx',
+        'src/components/ui/organisms/Header.component.tsx',
+        'src/App.tsx',
         'src/features/landing/screens/Landing.screen.tsx',
         'src/features/landing/components/HeroSection.component.tsx',
       ],

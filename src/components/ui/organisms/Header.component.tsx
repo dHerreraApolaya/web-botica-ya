@@ -1,11 +1,13 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
+import { CartLink } from '@/features/sales/components/CartLink.component';
 
 export const Header: FC = () => {
   return (
     <header className="sticky top-0 z-sticky w-full border-b border-border bg-surface shadow-subtle">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5 max-md:px-4">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3.5 max-md:px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2.5">
+          <Link to="/" aria-label="Botica Ya, inicio" className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-radius-md bg-primary text-primary-contrast shadow-subtle">
               <svg
                 className="h-6 w-6"
@@ -26,7 +28,7 @@ export const Header: FC = () => {
                 Farmacia Digital
               </span>
             </div>
-          </div>
+          </Link>
 
           <div className="hidden items-center gap-1.5 rounded-radius-full border border-border bg-bg-app px-3.5 py-1 text-xs font-medium text-text-muted lg:flex">
             <svg
@@ -53,8 +55,8 @@ export const Header: FC = () => {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
+          <Link
+            to="/checkout/prescription"
             className="hidden items-center gap-1.5 rounded-radius-md bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-surface-text transition-all duration-fast hover:opacity-90 sm:inline-flex"
           >
             <svg
@@ -72,28 +74,11 @@ export const Header: FC = () => {
               />
             </svg>
             <span>Subir Receta</span>
-          </button>
+          </Link>
 
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-radius-md border border-border bg-surface p-2 text-text-main transition-all duration-fast hover:bg-surface-hover"
-            aria-label="Carrito de compras"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-          </button>
+          <Link to="/carrito" aria-label="Carrito de compras">
+            <CartLink />
+          </Link>
         </div>
       </div>
     </header>

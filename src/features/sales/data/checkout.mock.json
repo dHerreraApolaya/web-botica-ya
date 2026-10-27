@@ -1,0 +1,27 @@
+{
+  "deliveryFeeInCents": 800,
+  "districts": ["Distrito Centro (demo)", "Distrito Norte (demo)", "Distrito Sur (demo)"],
+  "pharmacies": [
+    {
+      "id": "demo-centro",
+      "name": "Botica Demo Centro",
+      "address": "Av. Ejemplo 100, Distrito Centro",
+      "schedule": "Lunes a sábado, 09:00 a 20:00 (referencial)",
+      "available": true
+    },
+    {
+      "id": "demo-norte",
+      "name": "Botica Demo Norte",
+      "address": "Calle Ficticia 200, Distrito Norte",
+      "schedule": "Lunes a viernes, 09:00 a 18:00 (referencial)",
+      "available": true
+    },
+    {
+      "id": "demo-sur",
+      "name": "Botica Demo Sur",
+      "address": "Av. Muestra 300, Distrito Sur",
+      "schedule": "Sin atención en esta simulación",
+      "available": false
+    }
+  ]
+}

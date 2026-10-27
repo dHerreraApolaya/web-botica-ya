@@ -18,8 +18,9 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
     "prepare": "husky",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test": "pnpm test:hooks && vitest run",
+    "test:hooks": "node --test scripts/prevent-main-push.test.mjs",
+    "test:coverage": "pnpm test:hooks && vitest run --coverage"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

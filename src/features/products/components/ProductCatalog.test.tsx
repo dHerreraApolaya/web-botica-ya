@@ -14,11 +14,10 @@ const submitSearch = (query: string): void => {
 const results = (): HTMLElement => screen.getByRole('region', { name: 'Resultados de búsqueda' });
 
 describe('landing product catalog', () => {
-  it('shows eight featured products and labels demonstration data', () => {
+  it('shows eight featured products in the initial view', () => {
     render(<LandingScreen />);
     expect(screen.getAllByRole('article')).toHaveLength(8);
     expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
-    expect(screen.getByText(/Catálogo de demostración/)).toBeInTheDocument();
     expect(
       screen.queryByRole('navigation', { name: 'Paginación de productos' })
     ).not.toBeInTheDocument();

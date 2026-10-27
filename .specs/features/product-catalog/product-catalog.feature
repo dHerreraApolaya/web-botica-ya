@@ -5,7 +5,6 @@ Feature: Local featured products and catalog search
     Given the local catalog contains exactly 500 products with unique IDs and SKUs
     When the visitor opens the landing page
     Then eight available featured products are displayed
-    And the catalog is identified as demonstration data
     And prices are formatted in Peruvian soles
 
   Scenario: Search using normalized terms

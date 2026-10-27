@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved by the developer on 2026-10-26. Implementation and verification in progress.
+Approved by the developer on 2026-10-26. Implemented on `codex/local-product-catalog`.
 
 ## Objective
 
@@ -11,7 +11,7 @@ Connect the existing landing search and add a featured products section using ex
 ## Functional Requirements
 
 - Generate a deterministic catalog of exactly 500 products with unique IDs and SKUs, meaningful Spanish names, categories, fictional brands, presentations, positive prices in PEN, availability, and an explicit featured flag.
-- Reuse the six existing landing categories. Clearly identify the catalog and its prices as demonstration data.
+- Reuse the six existing landing categories. Keep the catalog and its prices fictional. Preserve the developer change hiding the demonstration notice in the landing screen.
 - Display eight available featured products on the landing page, using the same product card as search results.
 - Submit the existing search form using its button or Enter. Match all query terms against name, brand, category, presentation, and SKU, ignoring case, accents, and extra whitespace.
 - Connect the existing category buttons to category filtering. Do not infer medical diagnoses or treatment recommendations from symptoms.
@@ -49,3 +49,14 @@ Connect the existing landing search and add a featured products section using ex
 ## Out of Scope
 
 Backend integration, authentication, cart behavior, checkout, product detail routes, medical recommendations, dependency upgrades, and deployment.
+
+## Verification
+
+- Sixteen unit and component tests cover deterministic fixtures, normalized matching, category filters, pagination boundaries, empty results, resetting the view, and product card content.
+- V8 coverage includes the products module and both connected landing components. The configured quality gate requires at least 80% statements, branches, functions, and lines; measured coverage is 100% across all four metrics.
+- Production build, ESLint, and Prettier checks pass.
+- Browser checks confirm keyboard submission and no horizontal overflow at 375px, 768px, and 1280px. Product grids use one, two, and four columns respectively.
+- CI runs `pnpm test:coverage`. The developer approved adding the matching `@vitest/coverage-v8` development dependency.
+- Run `pnpm dev` for local development, `pnpm test` for tests, or `pnpm test:coverage` for the coverage gate.
+
+- During final verification, the developer committed the implementation and hid the demonstration notice. The initial-view test now verifies the visible featured section without requiring that notice.

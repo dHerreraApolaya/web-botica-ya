@@ -223,6 +223,7 @@ describe('complete checkout prototype', () => {
     expect(button).toHaveTextContent('Límite de stock');
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'BY-0011' } });
     fireEvent.submit(screen.getByRole('search'));
-    expect(within(screen.getByRole('article')).getByRole('button')).toBeDisabled();
+    for (const control of within(screen.getByRole('article')).getAllByRole('button'))
+      expect(control).toBeDisabled();
   });
 });

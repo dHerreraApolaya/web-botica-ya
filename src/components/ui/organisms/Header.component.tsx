@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { CartLink } from '@/features/sales/components/CartLink.component';
+import { UserMenu } from '@/features/user/components/UserMenu.component';
 
 export const Header: FC = () => {
   return (
@@ -54,11 +55,9 @@ export const Header: FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <Link
-            to="/checkout/prescription"
-            className="hidden items-center gap-1.5 rounded-radius-md bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-surface-text transition-all duration-fast hover:opacity-90 sm:inline-flex"
-          >
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
+          <UserMenu />
+          <Link to="/checkout/prescription">
             <svg
               className="h-4 w-4"
               fill="none"

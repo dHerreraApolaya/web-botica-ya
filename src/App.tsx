@@ -3,6 +3,9 @@ import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { LandingScreen } from './features/landing/screens/Landing.screen';
 import { MainLayout } from './layouts/MainLayout.layout';
 
+const CartScreen = lazy(() => import('./features/sales/screens/Cart.screen'));
+const CheckoutScreen = lazy(() => import('./features/sales/screens/Checkout.screen'));
+const ConfirmationScreen = lazy(() => import('./features/sales/screens/Confirmation.screen'));
 const UserAccessScreen = lazy(() => import('./features/user/screens/UserAccess.screen'));
 
 const App: FC = () => (
@@ -17,6 +20,9 @@ const App: FC = () => (
       >
         <Routes>
           <Route path="/" element={<LandingScreen />} />
+          <Route path="/carrito" element={<CartScreen />} />
+          <Route path="/checkout/:step?" element={<CheckoutScreen />} />
+          <Route path="/confirmacion" element={<ConfirmationScreen />} />
           <Route path="/iniciar-sesion" element={<UserAccessScreen key="login" mode="login" />} />
           <Route path="/registro" element={<UserAccessScreen key="register" mode="register" />} />
           <Route

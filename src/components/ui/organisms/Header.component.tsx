@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { CartLink } from '@/features/sales/components/CartLink.component';
 import { UserMenu } from '@/features/user/components/UserMenu.component';
 
 export const Header: FC = () => {
@@ -56,10 +57,7 @@ export const Header: FC = () => {
 
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
           <UserMenu />
-          <button
-            type="button"
-            className="hidden items-center gap-1.5 rounded-radius-md bg-primary-surface px-4 py-2 text-sm font-semibold text-primary-surface-text transition-all duration-fast hover:opacity-90 sm:inline-flex"
-          >
+          <Link to="/checkout/prescription">
             <svg
               className="h-4 w-4"
               fill="none"
@@ -75,28 +73,11 @@ export const Header: FC = () => {
               />
             </svg>
             <span>Subir Receta</span>
-          </button>
+          </Link>
 
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-radius-md border border-border bg-surface p-2 text-text-main transition-all duration-fast hover:bg-surface-hover"
-            aria-label="Carrito de compras"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-          </button>
+          <Link to="/carrito" aria-label="Carrito de compras">
+            <CartLink />
+          </Link>
         </div>
       </div>
     </header>

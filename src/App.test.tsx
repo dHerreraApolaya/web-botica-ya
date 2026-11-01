@@ -2,10 +2,13 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import App from './App';
 import { salesStore } from './features/sales/state/sales.store';
+import { useUserSession } from './features/user/state/userSession.store';
+import { LOCAL_PRODUCTS } from './features/products/data/products.data';
 
 afterEach(() => {
   cleanup();
   salesStore.getState().reset();
+  useUserSession.getState().signOut();
   window.history.replaceState({}, '', '/');
 });
 describe('sales route integration', () => {
@@ -39,6 +42,35 @@ const navigate = (path: string): void => {
 };
 
 describe('application routing', () => {
+  it('preserves the cart through sign-in, sign-out, and checkout navigation', async () => {
+    render(<App />);
+    const product = LOCAL_PRODUCTS[0];
+    fireEvent.click(screen.getByRole('button', { name: `Agregar ${product.name} al carrito` }));
+    const cart = salesStore.getState().cart;
+    fireEvent.click(screen.getByRole('link', { name: 'Ingresar' }));
+    await screen.findByRole('form', { name: 'Iniciar sesión' });
+    fireEvent.change(screen.getByLabelText('Correo electrónico'), {
+      target: { value: 'usuario0001@example.test' },
+    });
+    fireEvent.change(screen.getByLabelText('Contraseña', { exact: true }), {
+      target: { value: 'test-input-only' },
+    });
+    fireEvent.submit(screen.getByRole('form', { name: 'Iniciar sesión' }));
+    expect(
+      await screen.findByRole('heading', { name: '¡Ya iniciaste sesión!' })
+    ).toBeInTheDocument();
+    expect(useUserSession.getState().user?.email).toBe('usuario0001@example.test');
+    fireEvent.click(screen.getByRole('link', { name: 'Carrito de compras' }));
+    expect(await screen.findByRole('heading', { name: 'Tu carrito' })).toBeInTheDocument();
+    expect(salesStore.getState().cart).toEqual(cart);
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+    expect(useUserSession.getState().user).toBeNull();
+    expect(screen.getByRole('link', { name: 'Ingresar' })).toBeInTheDocument();
+    expect(salesStore.getState().cart).toEqual(cart);
+    fireEvent.click(screen.getByRole('link', { name: 'Continuar compra' }));
+    expect(await screen.findByRole('heading', { name: 'Entrega o recojo' })).toBeInTheDocument();
+  });
+
   it('preserves products and connects user entry and registration routes', async () => {
     navigate('/');
     render(<App />);

@@ -57,9 +57,12 @@ export const Header: FC = () => {
 
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
           <UserMenu />
-          <Link to="/checkout/prescription">
+          <Link
+            to="/checkout/prescription"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-radius-md px-3 text-sm font-semibold text-primary-surface-text transition-colors duration-fast hover:bg-primary-surface"
+          >
             <svg
-              className="h-4 w-4"
+              className="h-4 w-4 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

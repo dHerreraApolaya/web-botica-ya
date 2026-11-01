@@ -102,6 +102,6 @@ describe('product card', () => {
 
   it('distinguishes unavailable products', () => {
     render(<ProductCard product={{ ...LOCAL_PRODUCTS[0], inStock: false }} />);
-    expect(screen.getByText('Agotado')).toBeInTheDocument();
+    expect(screen.getAllByText('Agotado')).toHaveLength(2);
   });
 });

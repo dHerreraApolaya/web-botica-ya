@@ -18,7 +18,7 @@ export const createUserFacade = (adapter: UserAccessAdapter): UserAccessFacade =
   async register(input) {
     const parsed = registrationSchema.safeParse(input);
     if (!parsed.success) return { ok: false, code: 'invalid-input' };
-    const { fullName, email, password } = parsed.data;
-    return execute(() => adapter.register({ fullName, email, password }));
+    const { fullName, email, phone, password } = parsed.data;
+    return execute(() => adapter.register({ fullName, email, phone, password }));
   },
 });

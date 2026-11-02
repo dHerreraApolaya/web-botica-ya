@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { loginSchema, registrationSchema } from './accessValidation.util';
 
 const registration = {
+  phone: '999111222',
   fullName: ' Ana María ',
   email: ' ANA@example.test ',
   password: 'demo-12345',
@@ -30,6 +31,9 @@ describe('access validation', () => {
   });
 
   it.each([
+    { phone: '' },
+    { phone: 'abcdefghi' },
+    { phone: '123' },
     { fullName: ' ' },
     { fullName: 'x'.repeat(121) },
     { passwordConfirmation: 'different' },

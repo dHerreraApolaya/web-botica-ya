@@ -1,10 +1,12 @@
 import { z } from 'zod';
+import { phoneSchema } from '@/utils/phone.util';
 
 const mockUserSchema = z
   .object({
     id: z.string().min(1),
     fullName: z.string().min(2).max(120),
     email: z.email().refine((value) => value.endsWith('@example.test')),
+    phone: phoneSchema.optional(),
     status: z.enum(['active', 'blocked']),
   })
   .strict();

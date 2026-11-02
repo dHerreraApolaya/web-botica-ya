@@ -2,6 +2,7 @@ export interface User {
   readonly id: string;
   readonly fullName: string;
   readonly email: string;
+  readonly phone?: string;
 }
 
 export interface LoginInput {
@@ -10,6 +11,7 @@ export interface LoginInput {
 }
 
 export interface RegistrationInput extends LoginInput {
+  phone: string;
   fullName: string;
   passwordConfirmation: string;
 }

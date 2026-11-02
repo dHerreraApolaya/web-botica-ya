@@ -33,6 +33,25 @@ describe('local catalog', () => {
 });
 
 describe('product search', () => {
+  it.each(['VITNA', 'vitamna', 'vitamiba', 'mina'])(
+    'finds vitamins for partial or misspelled query %s',
+    (query) => {
+      const results = searchProducts(LOCAL_PRODUCTS, { query });
+      expect(results.some((product) => product.name.startsWith('Vitamina C'))).toBe(true);
+      expect(results.some((product) => product.name.startsWith('Vitamina D3'))).toBe(true);
+    }
+  );
+
+  it('keeps numeric codes precise and respects categories for approximate matches', () => {
+    expect(searchProducts(LOCAL_PRODUCTS, { query: 'BY-0001' })).toEqual([LOCAL_PRODUCTS[0]]);
+    expect(
+      searchProducts(LOCAL_PRODUCTS, { query: 'VITNA', category: 'Vitaminas & Suplementos' }).every(
+        (product) => product.category === 'Vitaminas & Suplementos'
+      )
+    ).toBe(true);
+    expect(searchProducts(LOCAL_PRODUCTS, { query: 'zzzzzzzz' })).toEqual([]);
+  });
+
   it('normalizes accents, case, and repeated whitespace', () => {
     expect(normalizeSearch('  MAMÁ   & BEBÉ  ')).toBe('mama & bebe');
   });

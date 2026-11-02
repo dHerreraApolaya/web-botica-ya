@@ -28,7 +28,7 @@ export const FulfillmentStep: FC = () => {
       district: saved?.type === 'delivery' ? saved.district : '',
       address: saved?.type === 'delivery' ? saved.address : '',
       reference: saved?.type === 'delivery' ? saved.reference : '',
-      pharmacyId: saved?.type === 'pickup' ? saved.pharmacyId : '',
+      pharmacyId: saved?.type === 'pickup' ? saved.pharmacyId : CHECKOUT_DATA.pharmacies[0].id,
     },
   });
   return (
@@ -139,7 +139,7 @@ export const FulfillmentStep: FC = () => {
           className="space-y-3"
           aria-describedby={errors.pharmacyId ? 'pharmacy-error' : undefined}
         >
-          <legend className="mb-3 font-semibold">Elige una botica de prueba</legend>
+          <legend className="mb-3 font-semibold">Local de recojo</legend>
           {CHECKOUT_DATA.pharmacies.map((pharmacy) => (
             <label
               key={pharmacy.id}

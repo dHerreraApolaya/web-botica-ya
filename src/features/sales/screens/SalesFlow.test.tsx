@@ -6,6 +6,7 @@ import CheckoutScreen from './Checkout.screen';
 import ConfirmationScreen from './Confirmation.screen';
 import { LandingScreen } from '../../landing/screens/Landing.screen';
 import { Header } from '@/components/ui/organisms/Header.component';
+import { useUserSession } from '../../user/state/userSession.store';
 import { salesStore } from '../state/sales.store';
 import { LOCAL_PRODUCTS } from '../../products/data/products.data';
 import { createCheckoutFacade } from '../application/checkout.facade';
@@ -56,12 +57,69 @@ const contactAndPay = async (): Promise<void> => {
 };
 afterEach(() => {
   cleanup();
+  useUserSession.getState().signOut();
   salesStore.setState({ paymentStatus: 'idle' });
   salesStore.getState().reset();
   vi.useRealTimers();
 });
 
 describe('complete checkout prototype', () => {
+  it('prefills the account phone and edits it for the order without changing the account', async () => {
+    const user = {
+      id: 'phone-user',
+      fullName: 'Ana Cuenta',
+      email: 'cuenta@example.test',
+      phone: '999111222',
+    };
+    useUserSession.getState().setUser(user);
+    add(0);
+    renderFlow('/checkout/fulfillment');
+    await choosePickup();
+    expect(screen.getByLabelText('Teléfono')).toHaveValue(user.phone);
+    fill('Teléfono', '999333444');
+    fireEvent.click(screen.getByLabelText('Tarjeta de prueba · terminación 4242'));
+    await submit('Contacto y pago');
+    expect(salesStore.getState().contact?.phone).toBe('999333444');
+    expect(useUserSession.getState().user?.phone).toBe(user.phone);
+    fireEvent.click(screen.getByRole('link', { name: 'Editar contacto o pago' }));
+    expect(screen.getByLabelText('Teléfono')).toHaveValue('999333444');
+    await submit('Contacto y pago');
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
+    expect(
+      await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' })
+    ).toBeInTheDocument();
+    expect(salesStore.getState().order?.contact.phone).toBe('999333444');
+  });
+
+  it('uses signed-in identity instead of asking for name and email again', async () => {
+    const user = { id: 'demo-user', fullName: 'Ana Cuenta', email: 'cuenta@example.test' };
+    useUserSession.getState().setUser(user);
+    add(0);
+    salesStore
+      .getState()
+      .setContactAndPayment(
+        { fullName: 'Old Guest', email: 'guest@example.test', phone: '999111222' },
+        'demo-card'
+      );
+    renderFlow('/checkout/fulfillment');
+    await choosePickup();
+    expect(screen.queryByLabelText('Nombre completo')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Correo electrónico')).not.toBeInTheDocument();
+    expect(screen.getByText(user.email)).toBeVisible();
+    expect(screen.getByLabelText('Teléfono')).toHaveValue('999111222');
+    await submit('Contacto y pago');
+    expect(salesStore.getState().contact).toEqual({
+      fullName: user.fullName,
+      email: user.email,
+      phone: '999111222',
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
+    expect(
+      await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' })
+    ).toBeInTheDocument();
+    expect(salesStore.getState().order?.contact.email).toBe(user.email);
+  });
+
   it('starts with catalog search, adds a product, changes quantities, and reaches a confirmed pickup order', async () => {
     renderFlow();
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'BY-0001' } });
@@ -141,9 +199,9 @@ describe('complete checkout prototype', () => {
     expect(screen.getByText('Selecciona un distrito con cobertura de prueba.')).toBeInTheDocument();
     expect(screen.getByLabelText('Dirección de prueba')).toHaveAttribute('aria-invalid', 'true');
     fireEvent.click(screen.getByLabelText('Recojo en botica · gratis'));
-    await submit('Entrega o recojo');
-    expect(screen.getByRole('alert')).toHaveTextContent('Selecciona una botica');
-    expect(screen.getByLabelText(/Botica Demo Sur/)).toBeDisabled();
+    expect(screen.getByLabelText(/Botica Demo Centro/)).toBeChecked();
+    expect(screen.queryByLabelText(/Botica Demo Norte/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Botica Demo Sur/)).not.toBeInTheDocument();
     fireEvent.click(screen.getByLabelText(/Envío a domicilio/));
     expect(
       calculatePricing(salesStore.getState().cart, salesStore.getState().fulfillment).delivery

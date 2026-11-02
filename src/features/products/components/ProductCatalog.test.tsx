@@ -14,6 +14,50 @@ const submitSearch = (query: string): void => {
 const results = (): HTMLElement => screen.getByRole('region', { name: 'Resultados de búsqueda' });
 
 describe('landing product catalog', () => {
+  it('toggles the selected category off without clearing a typed query', () => {
+    render(<LandingScreen />);
+    const category = screen.getByRole('button', { name: 'Medicamentos' });
+    fireEvent.click(category);
+    fireEvent.click(category);
+    expect(category).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    fireEvent.click(category);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    fireEvent.click(category);
+    expect(category).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('searchbox')).toHaveValue('parace');
+    expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
+  });
+
+  it('finds partial matches while typing and restores featured products when cleared', () => {
+    render(<LandingScreen />);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'PARACE' } });
+    expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
+    expect(
+      within(results())
+        .getAllByRole('article')
+        .every((card) => card.textContent?.includes('Paracetamol'))
+    ).toBe(true);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '' } });
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(8);
+  });
+
+  it('retains the category filter when typing a partial match and submitting', () => {
+    render(<LandingScreen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Medicamentos' }));
+    submitSearch('parace');
+    expect(screen.getByRole('button', { name: 'Medicamentos' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(
+      within(results())
+        .getAllByRole('article')
+        .every((card) => card.textContent?.includes('Paracetamol'))
+    ).toBe(true);
+  });
+
   it('shows eight featured products in the initial view', () => {
     render(<LandingScreen />);
     expect(screen.getAllByRole('article')).toHaveLength(8);

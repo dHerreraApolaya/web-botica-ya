@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CheckoutField } from '@/components/ui/molecules/CheckoutField.component';
 import { useSalesStore } from '../state/sales.store';
+import { useUserSession } from '../../user/state/userSession.store';
 import { contactSchema, paymentMethodSchema } from '../utils/checkout.util';
 
 const paymentFormSchema = contactSchema.extend({ paymentMethod: paymentMethodSchema });
@@ -13,6 +14,7 @@ interface PaymentFields {
   paymentMethod: string;
 }
 export const PaymentStep: FC = () => {
+  const user = useUserSession((session) => session.user);
   const contact = useSalesStore((state) => state.contact);
   const method = useSalesStore((state) => state.paymentMethod);
   const save = useSalesStore((state) => state.setContactAndPayment);
@@ -24,9 +26,9 @@ export const PaymentStep: FC = () => {
     formState: { errors },
   } = useForm<PaymentFields>({
     defaultValues: {
-      fullName: contact?.fullName ?? '',
-      email: contact?.email ?? '',
-      phone: contact?.phone ?? '',
+      fullName: user?.fullName ?? contact?.fullName ?? '',
+      email: user?.email ?? contact?.email ?? '',
+      phone: contact?.phone ?? user?.phone ?? '',
       paymentMethod: method ?? '',
     },
   });
@@ -36,7 +38,9 @@ export const PaymentStep: FC = () => {
       aria-label="Contacto y pago"
       className="space-y-5"
       onSubmit={handleSubmit((values) => {
-        const parsed = paymentFormSchema.safeParse(values);
+        const parsed = paymentFormSchema.safeParse(
+          user ? { ...values, fullName: user.fullName, email: user.email } : values
+        );
         if (!parsed.success) {
           parsed.error.issues.forEach((issue) =>
             setError(
@@ -57,26 +61,40 @@ export const PaymentStep: FC = () => {
         navigate('/checkout/review');
       })}
     >
-      <p className="text-sm text-text-muted">
-        Compra como invitado. Completa solo datos ficticios para este prototipo.
-      </p>
-      <CheckoutField
-        id="contact-name"
-        label="Nombre completo"
-        required
-        maxLength={120}
-        error={errors.fullName?.message}
-        {...register('fullName')}
-      />
-      <CheckoutField
-        id="contact-email"
-        label="Correo electrónico"
-        type="email"
-        required
-        maxLength={254}
-        error={errors.email?.message}
-        {...register('email')}
-      />
+      {user ? (
+        <div className="rounded-radius-md bg-primary-surface p-4 text-sm text-primary-surface-text">
+          <p className="font-semibold">Compras con tu cuenta</p>
+          <p className="mt-2 break-words">{user.fullName}</p>
+          <p className="break-words">{user.email}</p>
+          <p className="mt-2">
+            Usaremos estos datos para tu pedido. Completa el teléfono de contacto y elige cómo
+            pagar.
+          </p>
+        </div>
+      ) : (
+        <>
+          <p className="text-sm text-text-muted">
+            Compra como invitado. Completa solo datos ficticios para este prototipo.
+          </p>
+          <CheckoutField
+            id="contact-name"
+            label="Nombre completo"
+            required
+            maxLength={120}
+            error={errors.fullName?.message}
+            {...register('fullName')}
+          />
+          <CheckoutField
+            id="contact-email"
+            label="Correo electrónico"
+            type="email"
+            required
+            maxLength={254}
+            error={errors.email?.message}
+            {...register('email')}
+          />
+        </>
+      )}
       <CheckoutField
         id="contact-phone"
         label="Teléfono"

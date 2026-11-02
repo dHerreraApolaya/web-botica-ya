@@ -9,6 +9,14 @@ interface UserSession {
 
 export const useUserSession = create<UserSession>((set) => ({
   user: null,
-  setUser: (user) => set({ user: { id: user.id, fullName: user.fullName, email: user.email } }),
+  setUser: (user) =>
+    set({
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        ...(user.phone ? { phone: user.phone } : {}),
+      },
+    }),
   signOut: () => set({ user: null }),
 }));

@@ -14,12 +14,25 @@ export const LandingScreen: FC = () => {
   const [page, setPage] = useState<number>(1);
   const products = search ? localProductRepository.search(search) : [];
 
+  const updateQuery = (value: string): void => {
+    setQuery(value);
+    setSearch(
+      value.trim() || search?.category ? { query: value, category: search?.category } : null
+    );
+    setPage(1);
+  };
+
   const submitSearch = (): void => {
-    setSearch({ query });
+    setSearch({ query, category: search?.category });
     setPage(1);
   };
 
   const selectCategory = (category: ProductCategory): void => {
+    if (search?.category === category) {
+      setSearch(query.trim() ? { query } : null);
+      setPage(1);
+      return;
+    }
     setQuery('');
     setSearch({ query: '', category });
     setPage(1);
@@ -36,7 +49,7 @@ export const LandingScreen: FC = () => {
       <HeroSection
         query={query}
         activeCategory={search?.category}
-        onQueryChange={setQuery}
+        onQueryChange={updateQuery}
         onSearch={submitSearch}
         onCategorySelect={selectCategory}
       />

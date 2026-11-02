@@ -14,7 +14,7 @@ import { prescriptionSignature, validQuantity } from '../utils/checkout.util';
 export interface SalesState extends CheckoutContext {
   readonly paymentStatus: 'idle' | 'processing' | 'declined' | 'error';
   readonly order: Order | null;
-  addProduct: (product: Product) => boolean;
+  addProduct: (product: Product, quantity?: number) => boolean;
   changeQuantity: (id: string, quantity: number) => boolean;
   removeProduct: (id: string) => void;
   setFulfillment: (value: Fulfillment) => void;
@@ -43,11 +43,16 @@ export const createSalesStore = () =>
       }));
     return {
       ...initialState(),
-      addProduct: (product) => {
+      addProduct: (product, units = 1) => {
         const state = get();
-        if (state.paymentStatus === 'processing' || !product.inStock) return false;
+        if (
+          state.paymentStatus === 'processing' ||
+          !product.inStock ||
+          !validQuantity(units, product.availableQuantity)
+        )
+          return false;
         const current = state.cart.find((line) => line.product.id === product.id);
-        const quantity = (current?.quantity ?? 0) + 1;
+        const quantity = (current?.quantity ?? 0) + units;
         if (!validQuantity(quantity, product.availableQuantity)) return false;
         updateCart(
           current

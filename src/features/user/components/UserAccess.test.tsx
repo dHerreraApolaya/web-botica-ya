@@ -45,6 +45,7 @@ const fillLogin = (email: string = users[0].email): void => {
 };
 const fillRegistration = (email: string = 'new@example.test'): void => {
   fill('Nombre completo', '  María de los Ángeles  ');
+  fill('Teléfono', '999111222');
   fillLogin(email);
   fill('Confirmación de contraseña', 'test-input-only');
 };
@@ -189,6 +190,7 @@ describe('user access layouts', () => {
       await screen.findByRole('heading', { name: '¡Ya iniciaste sesión!' })
     ).toBeInTheDocument();
     expect(useUserSession.getState().user?.fullName).toBe('María de los Ángeles');
+    expect(useUserSession.getState().user?.phone).toBe('999111222');
   });
 
   it('rejects duplicate registration then allows a corrected email', async () => {

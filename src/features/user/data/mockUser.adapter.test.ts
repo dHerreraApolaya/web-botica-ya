@@ -6,6 +6,7 @@ import { mockUsersSchema } from './mockUser.schema';
 
 const password = 'test-input-only';
 const registration = {
+  phone: '999111222',
   fullName: 'María Nueva',
   email: 'new@example.test',
   password,
@@ -65,7 +66,8 @@ describe('static user mock adapter', () => {
         password,
       })
     ).toEqual({ ok: false, code: 'invalid-credentials' });
-    if (result.ok) expect(Object.keys(result.user).sort()).toEqual(['email', 'fullName', 'id']);
+    if (result.ok)
+      expect(Object.keys(result.user).sort()).toEqual(['email', 'fullName', 'id', 'phone']);
   });
 
   it('accepts only one of two concurrent registrations for the same email', async () => {

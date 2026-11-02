@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { phoneSchema } from '@/utils/phone.util';
 import fixtures from '../data/checkout.mock.json';
 import type {
   CartLine,
@@ -24,8 +25,6 @@ const fixtureSchema = z.object({
   ),
 });
 export const CHECKOUT_DATA = fixtureSchema.parse(fixtures);
-const PHONE_PATTERN = /^\+?[\d -]{7,20}$/;
-const NON_DIGITS_PATTERN = /\D/g;
 export const contactSchema = z.object({
   fullName: z
     .string()
@@ -33,13 +32,7 @@ export const contactSchema = z.object({
     .min(2, 'Ingresa tu nombre completo.')
     .max(120, 'Usa como máximo 120 caracteres.'),
   email: z.string().trim().toLowerCase().pipe(z.email('Ingresa un correo válido.').max(254)),
-  phone: z
-    .string()
-    .trim()
-    .refine(
-      (value) => PHONE_PATTERN.test(value) && value.replace(NON_DIGITS_PATTERN, '').length >= 7,
-      'Ingresa un teléfono válido (7 a 20 caracteres).'
-    ),
+  phone: phoneSchema,
 });
 const deliverySchema = z.object({
   type: z.literal('delivery'),

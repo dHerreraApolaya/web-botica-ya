@@ -25,9 +25,17 @@ export const createMockUserAdapter = (
       const user = usersByEmail.get(normalizeEmail(email));
       if (!user) return { ok: false, code: 'invalid-credentials' };
       if (user.status === 'blocked') return { ok: false, code: 'account-blocked' };
-      return { ok: true, user: { id: user.id, email: user.email, fullName: user.fullName } };
+      return {
+        ok: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          ...(user.phone ? { phone: user.phone } : {}),
+        },
+      };
     },
-    async register({ fullName, email }): Promise<AccessResult> {
+    async register({ fullName, email, phone }): Promise<AccessResult> {
       await wait();
       if (unavailable) return { ok: false, code: 'unavailable' };
       const normalizedEmail = normalizeEmail(email);
@@ -37,7 +45,7 @@ export const createMockUserAdapter = (
         id = `registered-${nextId++}`;
       } while (userIds.has(id));
       userIds.add(id);
-      const user: User = { id, fullName, email: normalizedEmail };
+      const user: User = { id, fullName, email: normalizedEmail, phone };
       usersByEmail.set(normalizedEmail, { ...user, status: 'active' });
       return { ok: true, user };
     },

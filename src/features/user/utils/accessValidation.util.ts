@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { phoneSchema } from '@/utils/phone.util';
 
 export const normalizeEmail = (value: string): string => value.trim().toLowerCase();
 
@@ -20,6 +21,7 @@ export const registrationSchema = loginSchema
       .trim()
       .min(2, 'Ingresa tu nombre completo.')
       .max(120, 'Usa como máximo 120 caracteres.'),
+    phone: phoneSchema,
     passwordConfirmation: z.string(),
   })
   .refine((input) => input.password === input.passwordConfirmation, {

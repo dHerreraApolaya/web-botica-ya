@@ -20,7 +20,7 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
     formState: { errors },
   } = useForm<RegistrationInput>({
     resolver: createSchemaResolver(registrationSchema),
-    defaultValues: { fullName: '', email: '', password: '', passwordConfirmation: '' },
+    defaultValues: { phone: '', fullName: '', email: '', password: '', passwordConfirmation: '' },
   });
   const { state, submit } = useAccessFlow();
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
@@ -81,6 +81,16 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
           maxLength={254}
           error={errors.email?.message}
           {...register('email')}
+        />
+        <FormField
+          required
+          id="register-phone"
+          label="Teléfono"
+          type="tel"
+          autoComplete="tel"
+          maxLength={20}
+          error={errors.phone?.message}
+          {...register('phone')}
         />
         <FormField
           required

@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { HeroSection } from '../components/HeroSection.component';
 import type { ProductCategory, ProductSearch } from '../../products/domain/Product';
 import { localProductRepository } from '../../products/data/localProduct.repository';
@@ -12,22 +12,41 @@ export const LandingScreen: FC = () => {
   const [query, setQuery] = useState<string>('');
   const [search, setSearch] = useState<ProductSearch | null>(null);
   const [page, setPage] = useState<number>(1);
-  const products = search ? localProductRepository.search(search) : [];
+  const pendingSearch = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelPendingSearch = (): void => {
+    if (pendingSearch.current !== null) {
+      clearTimeout(pendingSearch.current);
+      pendingSearch.current = null;
+    }
+  };
+  useEffect(() => cancelPendingSearch, []);
+  const products = useMemo(() => (search ? localProductRepository.search(search) : []), [search]);
 
   const updateQuery = (value: string): void => {
     setQuery(value);
-    setSearch(
-      value.trim() || search?.category ? { query: value, category: search?.category } : null
-    );
-    setPage(1);
+    cancelPendingSearch();
+    const nextSearch =
+      value.trim() || search?.category ? { query: value, category: search?.category } : null;
+    if (!value.trim()) {
+      setSearch(nextSearch);
+      setPage(1);
+      return;
+    }
+    pendingSearch.current = setTimeout(() => {
+      pendingSearch.current = null;
+      setSearch(nextSearch);
+      setPage(1);
+    }, 300);
   };
 
   const submitSearch = (): void => {
+    cancelPendingSearch();
     setSearch({ query, category: search?.category });
     setPage(1);
   };
 
   const selectCategory = (category: ProductCategory): void => {
+    cancelPendingSearch();
     if (search?.category === category) {
       setSearch(query.trim() ? { query } : null);
       setPage(1);
@@ -39,6 +58,7 @@ export const LandingScreen: FC = () => {
   };
 
   const clearSearch = (): void => {
+    cancelPendingSearch();
     setQuery('');
     setSearch(null);
     setPage(1);

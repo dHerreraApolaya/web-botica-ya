@@ -1,10 +1,14 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LandingScreen } from '../../landing/screens/Landing.screen';
 import { ProductCard } from './ProductCard.component';
+import { localProductRepository } from '../data/localProduct.repository';
 import { LOCAL_PRODUCTS } from '../data/products.data';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 const submitSearch = (query: string): void => {
   fireEvent.change(screen.getByRole('searchbox'), { target: { value: query } });
@@ -14,6 +18,31 @@ const submitSearch = (query: string): void => {
 const results = (): HTMLElement => screen.getByRole('region', { name: 'Resultados de búsqueda' });
 
 describe('landing product catalog', () => {
+  it('debounces rapid typing, skips repeated filtering, and cancels pending work on submit and clear', () => {
+    vi.useFakeTimers();
+    const search = vi.spyOn(localProductRepository, 'search');
+    render(<LandingScreen />);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'para' } });
+    act(() => vi.advanceTimersByTime(200));
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    act(() => vi.advanceTimersByTime(299));
+    expect(search).not.toHaveBeenCalled();
+    act(() => vi.advanceTimersByTime(1));
+    expect(search).toHaveBeenCalledTimes(1);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'vitamina' } });
+    expect(search).toHaveBeenCalledTimes(1);
+    fireEvent.submit(screen.getByRole('search'));
+    expect(search).toHaveBeenCalledTimes(2);
+    act(() => vi.advanceTimersByTime(300));
+    expect(search).toHaveBeenCalledTimes(2);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Limpiar búsqueda' }));
+    act(() => vi.advanceTimersByTime(300));
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    expect(search).toHaveBeenCalledTimes(2);
+    search.mockRestore();
+  });
+
   it('toggles the selected category off without clearing a typed query', () => {
     render(<LandingScreen />);
     const category = screen.getByRole('button', { name: 'Medicamentos' });
@@ -29,9 +58,14 @@ describe('landing product catalog', () => {
     expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
   });
 
-  it('finds partial matches while typing and restores featured products when cleared', () => {
+  it('finds partial matches after a typing pause and restores featured products when cleared', () => {
+    vi.useFakeTimers();
     render(<LandingScreen />);
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'PARACE' } });
+    expect(
+      screen.queryByRole('region', { name: 'Resultados de búsqueda' })
+    ).not.toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(300));
     expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
     expect(
       within(results())

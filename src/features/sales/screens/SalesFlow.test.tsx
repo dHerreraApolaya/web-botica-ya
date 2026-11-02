@@ -64,6 +64,31 @@ afterEach(() => {
 });
 
 describe('complete checkout prototype', () => {
+  it('returns to an approved prescription and replaces it before payment', async () => {
+    add(6);
+    renderFlow('/checkout/prescription');
+    fireEvent.click(screen.getByRole('button', { name: 'Usar receta de ejemplo' }));
+    await screen.findByText('Receta aprobada en la simulación.');
+    fireEvent.click(screen.getByRole('link', { name: 'Continuar con la entrega' }));
+    fireEvent.click(screen.getByRole('link', { name: '1. Receta médica de prueba' }));
+    expect(screen.getByRole('heading', { name: 'Receta médica de prueba' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Continuar con la entrega' }));
+    await choosePickup();
+    await contactAndPay();
+    fireEvent.click(screen.getByRole('link', { name: 'Cambiar receta' }));
+    fireEvent.change(screen.getByLabelText(/Seleccionar archivo ficticio/), {
+      target: {
+        files: [new File(['synthetic'], 'receta-corregida.pdf', { type: 'application/pdf' })],
+      },
+    });
+    await screen.findByText('Receta aprobada en la simulación.');
+    expect(salesStore.getState().prescription.document?.name).toBe('receta-corregida.pdf');
+    fireEvent.click(screen.getByRole('link', { name: '4. Revisa tu compra' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
+    await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' });
+    expect(salesStore.getState().order?.prescription.document?.name).toBe('receta-corregida.pdf');
+  });
+
   it('prefills the account phone and edits it for the order without changing the account', async () => {
     const user = {
       id: 'phone-user',

@@ -1,7 +1,7 @@
 import { useEffect, useRef, type FC } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useSalesStore } from '../state/sales.store';
-import { accessibleStep, CHECKOUT_STEPS } from '../state/checkout.state';
+import { accessibleStep, CHECKOUT_STEPS, earliestIncompleteStep } from '../state/checkout.state';
 import { calculatePricing, formatCount, prescriptionSignature } from '../utils/checkout.util';
 import { checkoutFacade } from '../application/checkout.config';
 import type { CheckoutFacade } from '../application/checkout.facade';
@@ -54,7 +54,18 @@ const CheckoutScreen: FC<{ facade?: CheckoutFacade }> = ({ facade = checkoutFaca
               className={`rounded-full border px-4 py-2 text-sm ${entry === step ? 'border-primary bg-primary-surface font-bold text-primary-surface-text' : 'border-border text-text-muted'}`}
               aria-current={entry === step ? 'step' : undefined}
             >
-              {index + 1}. {TITLES[entry]}
+              {!locked &&
+              entry !== step &&
+              CHECKOUT_STEPS.indexOf(entry) <=
+                CHECKOUT_STEPS.indexOf(earliestIncompleteStep(state)) ? (
+                <Link to={`/checkout/${entry}`} className="inline-flex min-h-11 items-center">
+                  {index + 1}. {TITLES[entry]}
+                </Link>
+              ) : (
+                <span className="inline-flex min-h-11 items-center">
+                  {index + 1}. {TITLES[entry]}
+                </span>
+              )}
             </li>
           ))}
         </ol>

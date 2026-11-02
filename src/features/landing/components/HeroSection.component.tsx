@@ -21,12 +21,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
   return (
     <section className="relative w-full bg-bg-app py-16 max-md:py-10">
       <div className="mx-auto max-w-6xl px-6 text-center max-md:px-4">
-        <div className="inline-flex items-center gap-2 rounded-radius-full bg-primary-surface px-4 py-1.5 text-xs font-semibold text-primary-surface-text">
-          <span className="h-2 w-2 rounded-radius-full bg-primary" />
-          <span>Farmacia Digital Autorizada • Envíos en menos de 45 min</span>
-        </div>
-
-        <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-text-main sm:text-5xl lg:text-6xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-text-main sm:text-5xl lg:text-6xl">
           Tu farmacia digital de confianza,{' '}
           <span className="text-primary">rápida y al mejor precio</span>
         </h1>

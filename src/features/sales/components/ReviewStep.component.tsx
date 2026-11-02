@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { CheckoutFacade } from '../application/checkout.facade';
 import { useSalesStore } from '../state/sales.store';
-import { calculatePricing } from '../utils/checkout.util';
+import { calculatePricing, prescriptionSignature } from '../utils/checkout.util';
 import { OrderDetails } from './OrderDetails.component';
 
 export const ReviewStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => {
@@ -27,6 +27,11 @@ export const ReviewStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => {
           <Link to="/carrito" className="inline-flex min-h-11 items-center">
             Editar productos
           </Link>
+          {prescriptionSignature(state.cart) ? (
+            <Link to="/checkout/prescription" className="inline-flex min-h-11 items-center">
+              Cambiar receta
+            </Link>
+          ) : null}
           <Link to="/checkout/fulfillment" className="inline-flex min-h-11 items-center">
             Editar entrega
           </Link>

@@ -3,10 +3,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LandingScreen } from '../../landing/screens/Landing.screen';
 import { ProductCard } from './ProductCard.component';
 import { localProductRepository } from '../data/localProduct.repository';
+import { salesStore } from '../../sales/state/sales.store';
 import { LOCAL_PRODUCTS } from '../data/products.data';
 
 afterEach(() => {
   cleanup();
+  salesStore.getState().reset();
   vi.useRealTimers();
 });
 
@@ -167,6 +169,17 @@ describe('landing product catalog', () => {
 });
 
 describe('product card', () => {
+  it('turns the stock badge red when the cart exhausts stock and restores it when units are removed', () => {
+    const product = { ...LOCAL_PRODUCTS[0], availableQuantity: 1 };
+    render(<ProductCard product={product} />);
+    expect(screen.getByText('Disponible')).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: `Agregar ${product.name} al carrito` }));
+    expect(screen.getByText('Agotado')).toHaveClass('bg-error', 'text-primary-contrast');
+    expect(screen.queryByText('Disponible')).not.toBeInTheDocument();
+    act(() => salesStore.getState().removeProduct(product.id));
+    expect(screen.getByText('Disponible')).not.toHaveClass('bg-error');
+  });
+
   it('shows local identity, PEN prices, presentation, and stock status', () => {
     const product = LOCAL_PRODUCTS[0];
     render(<ProductCard product={product} />);

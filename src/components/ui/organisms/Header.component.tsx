@@ -57,27 +57,6 @@ export const Header: FC = () => {
 
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
           <UserMenu />
-          <Link
-            to="/checkout/prescription"
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-radius-md px-3 text-sm font-semibold text-primary-surface-text transition-colors duration-fast hover:bg-primary-surface"
-          >
-            <svg
-              className="h-4 w-4 shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <span>Subir Receta</span>
-          </Link>
-
           <Link to="/carrito" aria-label="Carrito de compras">
             <CartLink />
           </Link>

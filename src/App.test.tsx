@@ -19,7 +19,10 @@ describe('sales route integration', () => {
     expect(await screen.findByRole('heading', { name: 'Tu carrito' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: /Seguir comprando/ }));
     expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('link', { name: 'Subir Receta' }));
+    expect(screen.queryByRole('link', { name: 'Subir Receta' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Carrito de compras' }));
+    await screen.findByRole('heading', { name: 'Tu carrito' });
+    fireEvent.click(screen.getByRole('link', { name: 'Continuar compra' }));
     expect(await screen.findByRole('heading', { name: 'Entrega o recojo' })).toBeInTheDocument();
   });
 

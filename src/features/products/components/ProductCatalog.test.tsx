@@ -119,7 +119,7 @@ describe('landing product catalog', () => {
 
   it('browses all 500 products, paginates, and resets the page on a new query', () => {
     render(<LandingScreen />);
-    fireEvent.click(screen.getByRole('button', { name: 'Buscar' }));
+    fireEvent.submit(screen.getByRole('search'));
     expect(screen.getByRole('status')).toHaveTextContent('500 productos');
     expect(screen.getAllByRole('article')).toHaveLength(12);
     expect(screen.getByRole('button', { name: 'Anterior' })).toBeDisabled();

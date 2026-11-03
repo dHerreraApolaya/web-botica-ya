@@ -47,27 +47,82 @@ const CheckoutScreen: FC<{ facade?: CheckoutFacade }> = ({ facade = checkoutFaca
         Prototipo de compra · usa únicamente datos ficticios.
       </p>
       <nav aria-label="Pasos de compra" className="my-6">
-        <ol className="flex flex-wrap gap-3">
-          {steps.map((entry, index) => (
-            <li
-              key={entry}
-              className={`rounded-full border px-4 py-2 text-sm ${entry === step ? 'border-primary bg-primary-surface font-bold text-primary-surface-text' : 'border-border text-text-muted'}`}
-              aria-current={entry === step ? 'step' : undefined}
-            >
-              {!locked &&
-              entry !== step &&
+        <ol className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+          {steps.map((entry, index) => {
+            const current = entry === step;
+            const complete =
+              CHECKOUT_STEPS.indexOf(entry) < CHECKOUT_STEPS.indexOf(earliestIncompleteStep(state));
+            const editable = !locked && !current && complete;
+            const reachable =
+              !locked &&
+              !current &&
               CHECKOUT_STEPS.indexOf(entry) <=
-                CHECKOUT_STEPS.indexOf(earliestIncompleteStep(state)) ? (
-                <Link to={`/checkout/${entry}`} className="inline-flex min-h-11 items-center">
-                  {index + 1}. {TITLES[entry]}
-                </Link>
-              ) : (
-                <span className="inline-flex min-h-11 items-center">
-                  {index + 1}. {TITLES[entry]}
+                CHECKOUT_STEPS.indexOf(earliestIncompleteStep(state));
+            const content = (
+              <>
+                <span className="flex min-w-0 items-center gap-2">
+                  {complete && !current ? (
+                    <svg
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  ) : null}
+                  <span>
+                    {index + 1}. {TITLES[entry]}
+                  </span>
                 </span>
-              )}
-            </li>
-          ))}
+                <span className="flex shrink-0 items-center gap-2 text-xs">
+                  {current ? 'Paso actual' : complete ? 'Completado' : 'Pendiente'}
+                  {editable ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-primary px-2 py-1 font-semibold">
+                      <svg
+                        aria-hidden="true"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.75"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="m15 5 4 4M4 20l4-1L20 7a3 3 0 0 0-4-4L4 15v5Z" />
+                      </svg>
+                      Editar
+                    </span>
+                  ) : null}
+                </span>
+              </>
+            );
+            return (
+              <li
+                key={entry}
+                aria-current={current ? 'step' : undefined}
+                className={`min-w-0 rounded-xl border text-sm ${current ? 'border-primary bg-primary-surface font-bold text-primary-surface-text' : complete ? 'border-primary bg-surface text-primary-surface-text' : 'border-border text-text-muted'}`}
+              >
+                {reachable ? (
+                  <Link
+                    to={`/checkout/${entry}`}
+                    className="flex min-h-14 flex-wrap items-center justify-between gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-primary-surface"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <span className="flex min-h-14 flex-wrap items-center justify-between gap-2 px-4 py-3">
+                    {content}
+                  </span>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </nav>
       <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start gap-8 max-lg:grid-cols-1">

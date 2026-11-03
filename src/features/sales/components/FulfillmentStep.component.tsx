@@ -1,3 +1,4 @@
+import { playFeedback } from '@/utils/feedback.util';
 import { useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -40,6 +41,7 @@ export const FulfillmentStep: FC = () => {
         clearErrors();
         const parsed = fulfillmentSchema.safeParse({ ...values, type: mode });
         if (!parsed.success) {
+          void playFeedback('error');
           parsed.error.issues.forEach((issue) =>
             setError(
               issue.path[0] as keyof FulfillmentFields,
@@ -120,8 +122,8 @@ export const FulfillmentStep: FC = () => {
           </div>
           <CheckoutField
             id="address"
-            label="Dirección de prueba"
-            maxLength={200}
+            label="Dirección"
+            maxLength={300}
             required
             error={errors.address?.message}
             {...register('address')}

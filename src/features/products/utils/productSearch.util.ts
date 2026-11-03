@@ -44,11 +44,15 @@ const matchesSimilarWord = (term: string, word: string): boolean => {
 
 export const searchProducts = (
   products: readonly Product[],
-  { query, category }: ProductSearch
+  { query, category, categories }: ProductSearch
 ): readonly Product[] => {
   const terms = normalizeSearch(query).split(' ').filter(Boolean);
 
-  const candidates = products.filter((product) => !category || product.category === category);
+  const candidates = products.filter(
+    (product) =>
+      (!category || product.category === category) &&
+      (!categories?.length || categories.includes(product.category))
+  );
   const exactMatches = candidates.filter((product) => {
     const text = normalizeSearch(
       `${product.name} ${product.brand} ${product.category} ${product.presentation} ${product.sku}`

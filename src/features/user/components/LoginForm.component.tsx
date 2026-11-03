@@ -1,3 +1,4 @@
+import { playFeedback } from '@/utils/feedback.util';
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -49,14 +50,18 @@ export const LoginForm: FC<LoginFormProps> = ({ facade }) => {
       noValidate
       aria-label="Iniciar sesión"
       aria-busy={state.status === 'submitting'}
-      onSubmit={handleSubmit((input) =>
-        submit(
-          () => facade.login(input),
-          (user) => {
-            setUser(user);
-            reset();
-          }
-        )
+      onSubmit={handleSubmit(
+        (input) =>
+          submit(
+            () => facade.login(input),
+            (user) => {
+              setUser(user);
+              reset();
+            }
+          ),
+        () => {
+          void playFeedback('error');
+        }
       )}
       className="space-y-5"
     >

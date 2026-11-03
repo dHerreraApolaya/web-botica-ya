@@ -1,3 +1,4 @@
+import { SoundToggle } from './SoundToggle.component';
 import type { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { CartLink } from '@/features/sales/components/CartLink.component';
@@ -9,7 +10,7 @@ export const Header: FC = () => {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-3.5 max-md:px-4">
         <div className="flex items-center gap-4">
           <Link to="/" aria-label="Botica Ya, inicio" className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-radius-md bg-primary text-primary-contrast shadow-subtle">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-contrast shadow-subtle">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -31,7 +32,7 @@ export const Header: FC = () => {
             </div>
           </Link>
 
-          <div className="hidden items-center gap-1.5 rounded-radius-full border border-border bg-bg-app px-3.5 py-1 text-xs font-medium text-text-muted lg:flex">
+          <div className="hidden items-center gap-1.5 rounded-full border border-border bg-bg-app px-3.5 py-1 text-xs font-medium text-text-muted lg:flex">
             <svg
               className="h-4 w-4 text-primary"
               fill="none"
@@ -57,6 +58,7 @@ export const Header: FC = () => {
 
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-2.5">
           <UserMenu />
+          <SoundToggle />
           <Link to="/carrito" aria-label="Carrito de compras">
             <CartLink />
           </Link>

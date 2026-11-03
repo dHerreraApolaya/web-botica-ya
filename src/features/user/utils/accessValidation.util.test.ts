@@ -10,6 +10,11 @@ const registration = {
 };
 
 describe('access validation', () => {
+  it('accepts names up to 300 characters', () => {
+    expect(
+      registrationSchema.safeParse({ ...registration, fullName: 'x'.repeat(300) }).success
+    ).toBe(true);
+  });
   it('normalizes names and email without trimming passwords', () => {
     expect(registrationSchema.parse(registration)).toEqual({
       ...registration,
@@ -24,6 +29,9 @@ describe('access validation', () => {
   it.each([
     { email: '', password: '' },
     { email: 'invalid', password: '12345678' },
+    { email: 'usuario@', password: '12345678' },
+    { email: 'usuario@dominio', password: '12345678' },
+    { email: 'usuario dominio@test.com', password: '12345678' },
     { email: 'a@example.test', password: 'short' },
     { email: 'a@example.test', password: 'x'.repeat(129) },
   ])('rejects invalid login fields: %j', (input) => {
@@ -35,7 +43,7 @@ describe('access validation', () => {
     { phone: 'abcdefghi' },
     { phone: '123' },
     { fullName: ' ' },
-    { fullName: 'x'.repeat(121) },
+    { fullName: 'x'.repeat(301) },
     { passwordConfirmation: 'different' },
   ])('rejects invalid registration fields: %j', (change) => {
     expect(registrationSchema.safeParse({ ...registration, ...change }).success).toBe(false);

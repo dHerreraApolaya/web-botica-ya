@@ -20,7 +20,7 @@ export const registrationSchema = loginSchema
       .string()
       .trim()
       .min(2, 'Ingresa tu nombre completo.')
-      .max(120, 'Usa como máximo 120 caracteres.'),
+      .max(300, 'Usa como máximo 300 caracteres.'),
     phone: phoneSchema,
     passwordConfirmation: z.string(),
   })

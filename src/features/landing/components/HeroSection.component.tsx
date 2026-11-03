@@ -1,21 +1,23 @@
 import type { FC } from 'react';
-import { CategoryIcon } from '../../products/components/CategoryIcon.component';
+import { CategoryFilter } from '../../products/components/CategoryFilter.component';
 
-import { PRODUCT_CATEGORIES, type ProductCategory } from '../../products/domain/Product';
+import { type ProductCategory } from '../../products/domain/Product';
 
 interface HeroSectionProps {
   query: string;
-  activeCategory?: ProductCategory;
+  activeCategories: readonly ProductCategory[];
   onQueryChange: (query: string) => void;
   onSearch: () => void;
+  onCategoriesClose: () => void;
   onCategorySelect: (category: ProductCategory) => void;
 }
 
 export const HeroSection: FC<HeroSectionProps> = ({
   query,
-  activeCategory,
+  activeCategories,
   onQueryChange,
   onSearch,
+  onCategoriesClose,
   onCategorySelect,
 }) => {
   return (
@@ -31,7 +33,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
           atención farmacéutica profesional y entrega directa en tu puerta.
         </p>
 
-        <div className="mx-auto mt-8 max-w-3xl">
+        <div id="catalog-filters" className="mx-auto mt-8 max-w-3xl">
           <form
             role="search"
             aria-label="Buscar productos"
@@ -71,33 +73,17 @@ export const HeroSection: FC<HeroSectionProps> = ({
                   value={query}
                   onChange={(event) => onQueryChange(event.target.value)}
                   placeholder="Nombre, marca, categoría o SKU (ej. Paracetamol)..."
-                  className="w-full rounded-radius-md border border-border bg-surface py-3.5 pl-11 pr-4 text-base text-text-main placeholder-text-muted shadow-subtle transition-all duration-fast focus-visible:outline-2 focus-visible:outline-focus-ring"
+                  className="w-full rounded-md border border-border bg-surface py-3.5 pl-11 pr-4 text-base text-text-main placeholder-text-muted shadow-subtle transition-all duration-fast focus-visible:outline-2 focus-visible:outline-focus-ring"
                 />
               </div>
             </div>
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-radius-md bg-primary px-8 py-3.5 text-base font-semibold text-primary-contrast shadow-card transition-all duration-fast hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-focus-ring"
-            >
-              Buscar
-            </button>
           </form>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs font-semibold text-text-muted">Explora por categoría:</span>
-            {PRODUCT_CATEGORIES.map((category) => (
-              <button
-                key={category}
-                type="button"
-                aria-pressed={activeCategory === category}
-                onClick={() => onCategorySelect(category)}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-radius-full border border-border bg-surface px-3.5 py-2 text-xs font-medium text-text-main shadow-subtle transition-all duration-fast hover:border-primary hover:bg-primary-surface hover:text-primary-surface-text aria-pressed:border-primary aria-pressed:bg-primary-surface aria-pressed:text-primary-surface-text"
-              >
-                <CategoryIcon category={category} />
-                <span>{category}</span>
-              </button>
-            ))}
-          </div>
+          <CategoryFilter
+            selected={activeCategories}
+            onToggle={onCategorySelect}
+            onClose={onCategoriesClose}
+          />
         </div>
       </div>
     </section>

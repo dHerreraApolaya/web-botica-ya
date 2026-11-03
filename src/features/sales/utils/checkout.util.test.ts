@@ -20,6 +20,28 @@ const pickup = { type: 'pickup' as const, pharmacyId: 'demo-centro' };
 const document = { name: 'prueba.pdf', type: 'application/pdf', size: 100 };
 
 describe('checkout rules', () => {
+  it('accepts names and addresses up to 300 characters and rejects longer values', () => {
+    const delivery = {
+      type: 'delivery',
+      district: CHECKOUT_DATA.districts[0],
+      address: 'x'.repeat(300),
+      reference: '',
+    };
+    expect(contactSchema.safeParse({ ...contact, fullName: 'x'.repeat(300) }).success).toBe(true);
+    expect(contactSchema.safeParse({ ...contact, fullName: 'x'.repeat(301) }).success).toBe(false);
+    expect(fulfillmentSchema.safeParse(delivery).success).toBe(true);
+    expect(fulfillmentSchema.safeParse({ ...delivery, address: 'x'.repeat(301) }).success).toBe(
+      false
+    );
+  });
+
+  it.each(['sin-arroba', 'usuario@', 'usuario@dominio', 'usuario dominio@test.com'])(
+    'rejects invalid checkout email %s',
+    (email) => {
+      expect(contactSchema.safeParse({ ...contact, email }).success).toBe(false);
+    }
+  );
+
   it('calculates integer-cent prices, delivery and pickup, including an empty cart', () => {
     const cart = [{ product: LOCAL_PRODUCTS[0], quantity: 2 }];
     expect(calculatePricing(cart, null)).toEqual({ subtotal: 900, delivery: 0, total: 900 });

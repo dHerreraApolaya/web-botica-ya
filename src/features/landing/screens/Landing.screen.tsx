@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
+import { CatalogNavigation } from '../components/CatalogNavigation.component';
+import { scrollToCatalogSection } from '@/utils/catalogScroll.util';
 import { HeroSection } from '../components/HeroSection.component';
 import type { ProductCategory, ProductSearch } from '../../products/domain/Product';
 import { localProductRepository } from '../../products/data/localProduct.repository';
@@ -22,11 +24,18 @@ export const LandingScreen: FC = () => {
   useEffect(() => cancelPendingSearch, []);
   const products = useMemo(() => (search ? localProductRepository.search(search) : []), [search]);
 
+  useEffect(() => {
+    if (search && !document.querySelector('dialog[open]'))
+      scrollToCatalogSection('catalog-filters');
+  }, [search, page]);
+
   const updateQuery = (value: string): void => {
     setQuery(value);
     cancelPendingSearch();
     const nextSearch =
-      value.trim() || search?.category ? { query: value, category: search?.category } : null;
+      value.trim() || search?.categories?.length
+        ? { query: value, categories: search?.categories }
+        : null;
     if (!value.trim()) {
       setSearch(nextSearch);
       setPage(1);
@@ -41,19 +50,17 @@ export const LandingScreen: FC = () => {
 
   const submitSearch = (): void => {
     cancelPendingSearch();
-    setSearch({ query, category: search?.category });
+    setSearch({ query, categories: search?.categories });
     setPage(1);
   };
 
   const selectCategory = (category: ProductCategory): void => {
     cancelPendingSearch();
-    if (search?.category === category) {
-      setSearch(query.trim() ? { query } : null);
-      setPage(1);
-      return;
-    }
-    setQuery('');
-    setSearch({ query: '', category });
+    const current = search?.categories ?? [];
+    const categories = current.includes(category)
+      ? current.filter((item) => item !== category)
+      : [...current, category];
+    setSearch(query.trim() || categories.length ? { query, categories } : null);
     setPage(1);
   };
 
@@ -68,13 +75,16 @@ export const LandingScreen: FC = () => {
     <div className="w-full">
       <HeroSection
         query={query}
-        activeCategory={search?.category}
+        activeCategories={search?.categories ?? []}
         onQueryChange={updateQuery}
         onSearch={submitSearch}
+        onCategoriesClose={() => {
+          if (search) scrollToCatalogSection('catalog-filters');
+        }}
         onCategorySelect={selectCategory}
       />
-      <div className="mx-auto max-w-6xl px-6 pb-16 max-md:px-4">
-        {/* <p className="mb-6 rounded-radius-md border border-border bg-surface p-4 text-sm text-text-muted">
+      <div id="catalog-results" className="mx-auto max-w-6xl px-6 pb-16 max-md:px-4">
+        {/* <p className="mb-6 rounded-md border border-border bg-surface p-4 text-sm text-text-muted">
           Catálogo de demostración: 500 productos ficticios y precios referenciales. No disponibles
           para compra.
         </p> */}
@@ -89,6 +99,7 @@ export const LandingScreen: FC = () => {
           <FeaturedProducts products={FEATURED_PRODUCTS} />
         )}
       </div>
+      <CatalogNavigation />
     </div>
   );
 };

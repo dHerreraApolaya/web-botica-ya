@@ -30,7 +30,7 @@ export const contactSchema = z.object({
     .string()
     .trim()
     .min(2, 'Ingresa tu nombre completo.')
-    .max(120, 'Usa como máximo 120 caracteres.'),
+    .max(300, 'Usa como máximo 300 caracteres.'),
   email: z.string().trim().toLowerCase().pipe(z.email('Ingresa un correo válido.').max(254)),
   phone: phoneSchema,
 });
@@ -42,7 +42,7 @@ const deliverySchema = z.object({
       (value) => CHECKOUT_DATA.districts.includes(value),
       'Selecciona un distrito con cobertura de prueba.'
     ),
-  address: z.string().trim().min(5, 'Ingresa una dirección completa.').max(200),
+  address: z.string().trim().min(5, 'Ingresa una dirección completa.').max(300),
   reference: z.string().trim().max(200),
 });
 const pickupSchema = z.object({

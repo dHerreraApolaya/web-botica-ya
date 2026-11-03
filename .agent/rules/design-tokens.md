@@ -44,14 +44,14 @@ Never use arbitrary Tailwind palette colors (e.g. `bg-green-500`, `text-slate-80
 
 ### 3. Border Radii Scale
 
-| Token                 | Value      | Pixel Equivalent | Target Element                          |
-| :-------------------- | :--------- | :--------------- | :-------------------------------------- |
-| `rounded-radius-xs`   | `0.25rem`  | `4px`            | Badges, tags, checkboxes                |
-| `rounded-radius-sm`   | `0.375rem` | `6px`            | Input fields, small buttons             |
-| `rounded-radius-md`   | `0.5rem`   | `8px`            | Standard cards, modals, dropdown panels |
-| `rounded-radius-lg`   | `0.75rem`  | `12px`           | Featured cards, promotion banners       |
-| `rounded-radius-xl`   | `1rem`     | `16px`           | Large dialogs, bottom sheets            |
-| `rounded-radius-full` | `9999px`   | Circular         | Pills, avatars, circular icon buttons   |
+| Token          | Value      | Pixel Equivalent | Target Element                          |
+| :------------- | :--------- | :--------------- | :-------------------------------------- |
+| `rounded-xs`   | `0.25rem`  | `4px`            | Badges, tags, checkboxes                |
+| `rounded-sm`   | `0.375rem` | `6px`            | Input fields, small buttons             |
+| `rounded-md`   | `0.5rem`   | `8px`            | Standard cards, modals, dropdown panels |
+| `rounded-lg`   | `0.75rem`  | `12px`           | Featured cards, promotion banners       |
+| `rounded-xl`   | `1rem`     | `16px`           | Large dialogs, bottom sheets            |
+| `rounded-full` | `9999px`   | Circular         | Pills, avatars, circular icon buttons   |
 
 ### 4. Motion & Animation Durations
 
@@ -125,7 +125,7 @@ Never write arbitrary z-index utilities like `z-[999]`. Use predefined tokens:
 
 ```tsx
 // Compliant: Tokenized semantic utilities, dark-mode native, 8px grid aligned
-<button className="bg-primary text-primary-contrast hover:bg-primary-hover px-6 py-3 rounded-radius-md transition-all duration-fast shadow-card focus-visible:outline-2 focus-visible:outline-focus-ring">
+<button className="bg-primary text-primary-contrast hover:bg-primary-hover px-6 py-3 rounded-md transition-all duration-fast shadow-card focus-visible:outline-2 focus-visible:outline-focus-ring">
   Comprar Ahora
 </button>
 ```

@@ -1,6 +1,6 @@
 {
   "deliveryFeeInCents": 800,
-  "districts": ["Distrito Centro (demo)", "Distrito Norte (demo)", "Distrito Sur (demo)"],
+  "districts": ["Barranco (demo)", "Chorrillos (demo)", "Surco (demo)"],
   "pharmacies": [
     {
       "id": "demo-centro",

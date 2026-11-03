@@ -1,10 +1,14 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
+import { playFeedback } from '@/utils/feedback.util';
 import { AddToCart } from './AddToCart.component';
 import { LOCAL_PRODUCTS } from '../../products/data/products.data';
 import { salesStore } from '../state/sales.store';
 
+vi.mock('@/utils/feedback.util', () => ({ playFeedback: vi.fn() }));
+
 afterEach(() => {
+  vi.clearAllMocks();
   cleanup();
   salesStore.getState().reset();
 });
@@ -20,6 +24,7 @@ it('selects units before adding and permits further additions only within remain
   fireEvent.click(increase);
   expect(increase).toBeDisabled();
   expect(salesStore.getState().cart).toEqual([]);
+  expect(playFeedback).not.toHaveBeenCalled();
   expect(screen.getByText('En tu carrito: 0 unidades')).toBeVisible();
   fireEvent.click(decrease);
   fireEvent.click(add);
@@ -30,5 +35,8 @@ it('selects units before adding and permits further additions only within remain
   fireEvent.click(add);
   expect(salesStore.getState().cart[0].quantity).toBe(3);
   expect(add).toBeDisabled();
+  expect(playFeedback).toHaveBeenCalledTimes(2);
+  fireEvent.click(add);
+  expect(playFeedback).toHaveBeenCalledTimes(2);
   expect(increase).toBeDisabled();
 });

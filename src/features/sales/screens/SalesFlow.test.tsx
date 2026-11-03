@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { playFeedback } from '@/utils/feedback.util';
 import CartScreen from './Cart.screen';
 import CheckoutScreen from './Checkout.screen';
 import ConfirmationScreen from './Confirmation.screen';
@@ -12,6 +13,12 @@ import { LOCAL_PRODUCTS } from '../../products/data/products.data';
 import { createCheckoutFacade } from '../application/checkout.facade';
 import { createMockCheckoutAdapters } from '../data/mockCheckout.adapter';
 import { CHECKOUT_DATA, calculatePricing } from '../utils/checkout.util';
+
+vi.mock('@/utils/feedback.util', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/feedback.util')>()),
+  playFeedback: vi.fn(),
+  prepareSound: vi.fn(),
+}));
 
 const renderFlow = (
   path = '/',
@@ -57,6 +64,7 @@ const contactAndPay = async (): Promise<void> => {
 };
 afterEach(() => {
   cleanup();
+  vi.clearAllMocks();
   useUserSession.getState().signOut();
   salesStore.setState({ paymentStatus: 'idle' });
   salesStore.getState().reset();
@@ -70,10 +78,15 @@ describe('complete checkout prototype', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Usar receta de ejemplo' }));
     await screen.findByText('Receta aprobada en la simulación.');
     fireEvent.click(screen.getByRole('link', { name: 'Continuar con la entrega' }));
-    fireEvent.click(screen.getByRole('link', { name: '1. Receta médica de prueba' }));
+    fireEvent.click(
+      screen.getByRole('link', { name: /1\. Receta médica de prueba.*Completado.*Editar/ })
+    );
     expect(screen.getByRole('heading', { name: 'Receta médica de prueba' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: 'Continuar con la entrega' }));
     await choosePickup();
+    expect(
+      screen.getByRole('link', { name: /Entrega o recojo.*Completado.*Editar/ })
+    ).toBeInTheDocument();
     await contactAndPay();
     fireEvent.click(screen.getByRole('link', { name: 'Cambiar receta' }));
     fireEvent.change(screen.getByLabelText(/Seleccionar archivo ficticio/), {
@@ -83,10 +96,11 @@ describe('complete checkout prototype', () => {
     });
     await screen.findByText('Receta aprobada en la simulación.');
     expect(salesStore.getState().prescription.document?.name).toBe('receta-corregida.pdf');
-    fireEvent.click(screen.getByRole('link', { name: '4. Revisa tu compra' }));
+    fireEvent.click(screen.getByRole('link', { name: /4\. Revisa tu compra/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
     await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' });
     expect(salesStore.getState().order?.prescription.document?.name).toBe('receta-corregida.pdf');
+    expect(playFeedback).toHaveBeenCalledWith('order');
   });
 
   it('prefills the account phone and edits it for the order without changing the account', async () => {
@@ -222,7 +236,7 @@ describe('complete checkout prototype', () => {
     renderFlow('/checkout/review');
     await submit('Entrega o recojo');
     expect(screen.getByText('Selecciona un distrito con cobertura de prueba.')).toBeInTheDocument();
-    expect(screen.getByLabelText('Dirección de prueba')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByLabelText('Dirección')).toHaveAttribute('aria-invalid', 'true');
     fireEvent.click(screen.getByLabelText('Recojo en botica · gratis'));
     expect(screen.getByLabelText(/Botica Demo Centro/)).toBeChecked();
     expect(screen.queryByLabelText(/Botica Demo Norte/)).not.toBeInTheDocument();
@@ -232,12 +246,13 @@ describe('complete checkout prototype', () => {
       calculatePricing(salesStore.getState().cart, salesStore.getState().fulfillment).delivery
     ).toBe(800);
     fill('Distrito de prueba', CHECKOUT_DATA.districts[0]);
-    fill('Dirección de prueba', 'Calle Ficticia 123');
+    fill('Dirección', 'Calle Ficticia 123');
     fill('Referencia (opcional)', 'Puerta de ejemplo');
     await submit('Entrega o recojo');
     expect(salesStore.getState().fulfillment?.type).toBe('delivery');
     await submit('Contacto y pago');
     expect(screen.getByLabelText('Nombre completo')).toHaveAttribute('aria-invalid', 'true');
+    expect(playFeedback).toHaveBeenCalledWith('error');
     expect(screen.getByRole('alert')).toHaveTextContent('Selecciona un medio de pago');
     fill('Nombre completo', 'Ana');
     fill('Correo electrónico', 'ana@example.test');
@@ -247,7 +262,7 @@ describe('complete checkout prototype', () => {
     expect(screen.getByText('Calle Ficticia 123')).toBeInTheDocument();
     expect(screen.getByText('Referencia: Puerta de ejemplo')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: 'Editar entrega' }));
-    expect(screen.getByLabelText('Dirección de prueba')).toHaveValue('Calle Ficticia 123');
+    expect(screen.getByLabelText('Dirección')).toHaveValue('Calle Ficticia 123');
     await choosePickup();
     expect(screen.getByLabelText('Nombre completo')).toHaveValue('Ana');
     await submit('Contacto y pago');
@@ -271,6 +286,7 @@ describe('complete checkout prototype', () => {
         payment === 'declined' ? 'rechazado' : 'no está disponible'
       );
       expect(salesStore.getState().cart).toHaveLength(1);
+      expect(playFeedback).not.toHaveBeenCalledWith('order');
       expect(screen.getByRole('button', { name: 'Confirmar compra de prueba' })).toBeEnabled();
     }
   );

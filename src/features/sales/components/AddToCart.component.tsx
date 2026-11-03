@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react';
+import { playFeedback } from '@/utils/feedback.util';
 import type { Product } from '../../products/domain/Product';
 import { useSalesStore } from '../state/sales.store';
 
@@ -30,11 +31,14 @@ export const AddToCart: FC<{ product: Product }> = ({ product }) => {
           aria-label={`Restar ${product.name}`}
           disabled={processing || unitsToAdd <= 1}
           onClick={() => setSelectedQuantity(unitsToAdd - 1)}
-          className="h-11 w-11 rounded-radius-md border border-border text-text-main transition-colors duration-fast hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-11 w-11 rounded-md border border-border text-text-main transition-colors duration-fast hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           −
         </button>
-        <span className="text-center text-sm font-semibold tabular-nums text-text-main">
+        <span
+          key={unitsToAdd}
+          className="quantity-feedback text-center text-sm font-semibold tabular-nums text-text-main"
+        >
           {unitsToAdd}
         </span>
         <button
@@ -42,7 +46,7 @@ export const AddToCart: FC<{ product: Product }> = ({ product }) => {
           aria-label={`Sumar ${product.name}`}
           disabled={processing || unitsToAdd >= remaining}
           onClick={() => setSelectedQuantity(unitsToAdd + 1)}
-          className="h-11 w-11 rounded-radius-md border border-border text-text-main transition-colors duration-fast hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-11 w-11 rounded-md border border-border text-text-main transition-colors duration-fast hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           +
         </button>
@@ -52,9 +56,12 @@ export const AddToCart: FC<{ product: Product }> = ({ product }) => {
         disabled={!product.inStock || processing || atLimit}
         aria-label={`Agregar ${product.name} al carrito`}
         onClick={() => {
-          if (addProduct(product, unitsToAdd)) setSelectedQuantity(1);
+          if (addProduct(product, unitsToAdd)) {
+            setSelectedQuantity(1);
+            playFeedback('cart');
+          }
         }}
-        className="mt-4 h-12 w-full rounded-radius-md bg-primary px-2 text-sm font-semibold text-primary-contrast transition-colors duration-fast hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-4 h-12 w-full rounded-md border border-primary bg-primary px-2 text-sm font-semibold text-primary-contrast transition-colors duration-fast hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {!product.inStock ? 'Agotado' : atLimit ? 'Límite de stock' : 'Agregar al carrito'}
       </button>

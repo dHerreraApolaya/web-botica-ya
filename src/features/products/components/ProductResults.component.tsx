@@ -10,7 +10,7 @@ interface ProductResultsProps {
 }
 
 const PAGINATION_BUTTON_CLASS =
-  'min-h-11 rounded-radius-md border border-border bg-surface px-4 py-2 font-semibold text-text-main transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50';
+  'min-h-11 rounded-md border border-border bg-surface px-4 py-2 font-semibold text-text-main transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50';
 
 export const ProductResults: FC<ProductResultsProps> = ({
   resultPage,
@@ -33,7 +33,7 @@ export const ProductResults: FC<ProductResultsProps> = ({
       </button>
     </div>
     {total === 0 ? (
-      <div className="mt-6 rounded-radius-lg border border-border bg-surface p-8 text-center">
+      <div className="mt-6 rounded-lg border border-border bg-surface p-8 text-center">
         <h3 className="text-xl font-bold text-text-main">No encontramos productos</h3>
         <p className="mt-2 text-text-muted">
           Prueba con otro nombre, marca o categoría, o limpia la búsqueda.

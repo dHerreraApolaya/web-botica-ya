@@ -1,3 +1,4 @@
+import { playFeedback } from '@/utils/feedback.util';
 import { useState, type FC } from 'react';
 import { Link } from 'react-router-dom';
 import type { CheckoutFacade } from '../application/checkout.facade';
@@ -10,7 +11,9 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
   const review = useSalesStore((state) => state.prescription);
   const [error, setError] = useState<string | null>(null);
   const submit = async (document: PrescriptionDocument): Promise<void> => {
-    setError(await facade.reviewPrescription(document));
+    const validationError = await facade.reviewPrescription(document);
+    setError(validationError);
+    if (validationError) void playFeedback('error');
   };
   return (
     <div className="space-y-5">
@@ -18,7 +21,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
         Añade tu receta de prueba para continuar. Puedes cambiar el archivo antes de confirmar tu
         compra.
       </p>
-      <div className="rounded-radius-lg border border-border bg-bg-app p-4">
+      <div className="rounded-lg border border-border bg-bg-app p-4">
         <h2 className="text-sm font-semibold text-text-main">Productos que necesitan receta</h2>
         <ul className="mt-2 space-y-2 text-sm text-text-muted">
           {cart
@@ -33,8 +36,8 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
             ))}
         </ul>
       </div>
-      <div className="rounded-radius-lg border border-dashed border-primary bg-primary-surface p-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-radius-full bg-surface text-primary-surface-text">
+      <div className="rounded-lg border border-dashed border-primary bg-primary-surface p-6 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface text-primary-surface-text">
           <svg
             width="24"
             height="24"
@@ -64,7 +67,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
           accept=".pdf,.jpg,.jpeg,.png"
           disabled={review.status === 'pending'}
           aria-describedby="prescription-help"
-          className="mt-4 block min-h-12 w-full min-w-0 rounded-radius-md border border-border bg-surface p-2 text-sm text-text-main file:mr-2 file:min-h-11 file:rounded-radius-sm file:border-0 file:bg-primary file:px-4 file:font-semibold file:text-primary-contrast disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 block min-h-12 w-full min-w-0 rounded-md border border-border bg-surface p-2 text-sm text-text-main file:mr-2 file:min-h-11 file:rounded-sm file:border-0 file:bg-primary file:px-4 file:font-semibold file:text-primary-contrast disabled:cursor-not-allowed disabled:opacity-50"
           onChange={(event) => {
             const file = event.target.files?.[0];
             if (file) void submit({ name: file.name, type: file.type, size: file.size });
@@ -72,7 +75,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
           }}
         />
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-radius-lg border border-border p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border p-4">
         <div>
           <h2 className="text-sm font-semibold">¿Solo estás probando?</h2>
           <p className="mt-1 text-sm text-text-muted">Continúa con un archivo de ejemplo.</p>
@@ -83,7 +86,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
           onClick={() =>
             void submit({ name: 'receta-sintetica.pdf', type: 'application/pdf', size: 1024 })
           }
-          className="min-h-11 rounded-radius-md border border-primary px-4 py-2 text-sm font-semibold text-primary-surface-text transition-colors duration-fast hover:bg-primary-surface disabled:opacity-50"
+          className="min-h-11 rounded-md border border-primary px-4 py-2 text-sm font-semibold text-primary-surface-text transition-colors duration-fast hover:bg-primary-surface disabled:opacity-50"
         >
           Usar receta de ejemplo
         </button>
@@ -94,7 +97,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
         simulada.
       </p>
       {review.document ? (
-        <p className="break-words rounded-radius-md border border-border bg-bg-app p-4 text-sm text-text-main">
+        <p className="break-words rounded-md border border-border bg-bg-app p-4 text-sm text-text-main">
           Archivo de prueba: {review.document.name}. Puedes seleccionar otro archivo para
           reemplazarlo y revisarlo nuevamente.
         </p>
@@ -111,7 +114,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
             : ''}
       </p>
       {error || review.status === 'rejected' || review.status === 'error' ? (
-        <p role="alert" className="rounded-radius-md border border-error p-4 text-sm text-error">
+        <p role="alert" className="rounded-md border border-error p-4 text-sm text-error">
           {error ??
             (review.status === 'rejected'
               ? 'La receta de prueba fue rechazada. Reemplázala para intentar otra vez.'
@@ -121,7 +124,7 @@ export const PrescriptionStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => 
       {review.status === 'approved' ? (
         <Link
           to="/checkout/fulfillment"
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-radius-md bg-primary px-5 py-3 font-semibold text-primary-contrast transition-colors duration-fast hover:bg-primary-hover"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-primary px-5 py-3 font-semibold text-primary-contrast transition-colors duration-fast hover:bg-primary-hover"
         >
           Continuar con la entrega
         </Link>

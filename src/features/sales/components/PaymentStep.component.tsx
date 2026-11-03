@@ -1,3 +1,4 @@
+import { playFeedback } from '@/utils/feedback.util';
 import type { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -42,6 +43,7 @@ export const PaymentStep: FC = () => {
           user ? { ...values, fullName: user.fullName, email: user.email } : values
         );
         if (!parsed.success) {
+          void playFeedback('error');
           parsed.error.issues.forEach((issue) =>
             setError(
               issue.path[0] as keyof PaymentFields,
@@ -62,7 +64,7 @@ export const PaymentStep: FC = () => {
       })}
     >
       {user ? (
-        <div className="rounded-radius-md bg-primary-surface p-4 text-sm text-primary-surface-text">
+        <div className="rounded-md bg-primary-surface p-4 text-sm text-primary-surface-text">
           <p className="font-semibold">Compras con tu cuenta</p>
           <p className="mt-2 break-words">{user.fullName}</p>
           <p className="break-words">{user.email}</p>
@@ -80,7 +82,7 @@ export const PaymentStep: FC = () => {
             id="contact-name"
             label="Nombre completo"
             required
-            maxLength={120}
+            maxLength={300}
             error={errors.fullName?.message}
             {...register('fullName')}
           />
@@ -100,7 +102,11 @@ export const PaymentStep: FC = () => {
         label="Teléfono"
         type="tel"
         required
-        maxLength={20}
+        minLength={9}
+        maxLength={9}
+        inputMode="numeric"
+        pattern="9[0-9]{8}"
+        placeholder="Ej. 999111222"
         error={errors.phone?.message}
         {...register('phone')}
       />

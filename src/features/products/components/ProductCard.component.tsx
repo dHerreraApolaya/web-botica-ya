@@ -15,9 +15,9 @@ export const ProductCard: FC<ProductCardProps> = ({ product }) => {
   );
   const available = product.inStock && quantity < product.availableQuantity;
   return (
-    <article className="flex min-w-0 flex-col rounded-radius-lg border border-border bg-surface p-5 shadow-subtle">
+    <article className="flex min-w-0 flex-col rounded-lg border border-border bg-surface p-5 shadow-subtle">
       <div
-        className="mb-5 flex h-28 items-center justify-center rounded-radius-md bg-primary-surface text-primary-surface-text"
+        className="mb-5 flex h-28 items-center justify-center rounded-md bg-primary-surface text-primary-surface-text"
         aria-hidden="true"
       >
         <svg
@@ -42,7 +42,7 @@ export const ProductCard: FC<ProductCardProps> = ({ product }) => {
           {PRICE_FORMATTER.format(product.priceInCents / 100)}
         </p>
         <span
-          className={`rounded-radius-full px-3 py-1 text-xs font-semibold ${available ? 'bg-bg-app text-text-main' : 'bg-error text-primary-contrast'}`}
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${available ? 'bg-bg-app text-text-main' : 'bg-error text-primary-contrast'}`}
         >
           {available ? 'Disponible' : 'Agotado'}
         </span>

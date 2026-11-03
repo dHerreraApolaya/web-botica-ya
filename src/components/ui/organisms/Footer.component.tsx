@@ -4,8 +4,8 @@ export const Footer: FC = () => (
   <footer aria-label="Beneficios de Botica Ya" className="w-full bg-bg-app pb-10">
     <div className="mx-auto max-w-6xl px-6 max-md:px-4">
       <div className="grid grid-cols-1 gap-4 border-t border-border pt-10 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex items-center gap-4 rounded-radius-lg border border-border bg-surface p-4 text-left shadow-subtle">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-radius-md bg-primary-surface text-primary">
+        <div className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 text-left shadow-subtle">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary-surface text-primary">
             <svg
               className="h-6 w-6"
               fill="none"
@@ -27,8 +27,8 @@ export const Footer: FC = () => (
           </div>
         </div>
 
-        <div className="flex items-center gap-4 rounded-radius-lg border border-border bg-surface p-4 text-left shadow-subtle">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-radius-md bg-primary-surface text-primary">
+        <div className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 text-left shadow-subtle">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary-surface text-primary">
             <svg
               className="h-6 w-6"
               fill="none"
@@ -50,8 +50,8 @@ export const Footer: FC = () => (
           </div>
         </div>
 
-        <div className="flex items-center gap-4 rounded-radius-lg border border-border bg-surface p-4 text-left shadow-subtle">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-radius-md bg-primary-surface text-primary">
+        <div className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 text-left shadow-subtle">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary-surface text-primary">
             <svg
               className="h-6 w-6"
               fill="none"
@@ -73,8 +73,8 @@ export const Footer: FC = () => (
           </div>
         </div>
 
-        <div className="flex items-center gap-4 rounded-radius-lg border border-border bg-surface p-4 text-left shadow-subtle">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-radius-md bg-primary-surface text-primary">
+        <div className="flex items-center gap-4 rounded-lg border border-border bg-surface p-4 text-left shadow-subtle">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary-surface text-primary">
             <svg
               className="h-6 w-6"
               fill="none"

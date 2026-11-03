@@ -1,3 +1,4 @@
+import { playFeedback } from '@/utils/feedback.util';
 import { useState, type FC } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -50,14 +51,18 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
       noValidate
       aria-label="Crear cuenta"
       aria-busy={state.status === 'submitting'}
-      onSubmit={handleSubmit((input) =>
-        submit(
-          () => facade.register(input),
-          (user) => {
-            setRegisteredEmail(user.email);
-            reset();
-          }
-        )
+      onSubmit={handleSubmit(
+        (input) =>
+          submit(
+            () => facade.register(input),
+            (user) => {
+              setRegisteredEmail(user.email);
+              reset();
+            }
+          ),
+        () => {
+          void playFeedback('error');
+        }
       )}
       className="space-y-5"
     >
@@ -68,7 +73,7 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
           id="register-name"
           label="Nombre completo"
           autoComplete="name"
-          maxLength={120}
+          maxLength={300}
           error={errors.fullName?.message}
           {...register('fullName')}
         />
@@ -88,7 +93,11 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
           label="Teléfono"
           type="tel"
           autoComplete="tel"
-          maxLength={20}
+          minLength={9}
+          maxLength={9}
+          inputMode="numeric"
+          pattern="9[0-9]{8}"
+          placeholder="Ej. 999111222"
           error={errors.phone?.message}
           {...register('phone')}
         />

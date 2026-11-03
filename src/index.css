@@ -165,3 +165,47 @@
     outline-offset: 2px;
   }
 }
+
+@keyframes cart-feedback {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+}
+@keyframes quantity-feedback {
+  from {
+    transform: translateY(3px);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes drawer-enter {
+  from {
+    transform: translateY(32px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cart-feedback {
+    animation: cart-feedback 300ms ease-out;
+  }
+  .quantity-feedback {
+    animation: quantity-feedback 150ms ease-out;
+  }
+  .category-drawer[open] {
+    animation: drawer-enter 250ms ease-out;
+  }
+}
+html:has(.category-drawer[open]) {
+  overflow: hidden;
+}

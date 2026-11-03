@@ -1,3 +1,4 @@
+import { playFeedback, prepareSound } from '@/utils/feedback.util';
 import type { FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { CheckoutFacade } from '../application/checkout.facade';
@@ -56,11 +57,15 @@ export const ReviewStep: FC<{ facade: CheckoutFacade }> = ({ facade }) => {
       <button
         type="button"
         disabled={locked}
-        onClick={() =>
+        onClick={() => {
+          prepareSound();
           void facade.confirmOrder().then((order) => {
-            if (order) navigate('/confirmacion');
-          })
-        }
+            if (order) {
+              playFeedback('order');
+              navigate('/confirmacion');
+            }
+          });
+        }}
         className="min-h-12 w-full rounded-md bg-primary px-5 py-3 font-semibold text-primary-contrast hover:bg-primary-hover disabled:opacity-50"
       >
         {locked ? 'Procesando…' : 'Confirmar compra de prueba'}

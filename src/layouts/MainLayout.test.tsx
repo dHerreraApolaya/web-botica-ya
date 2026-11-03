@@ -1,0 +1,45 @@
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter, Link } from 'react-router-dom';
+import { afterEach, expect, it, vi } from 'vitest';
+import { MainLayout } from './MainLayout.layout';
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+it('returns to the top on route changes without resetting scroll for query changes', () => {
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+  render(
+    <MemoryRouter>
+      <MainLayout>
+        <Link to="/carrito">Abrir carrito</Link>
+        <Link to="/carrito?detalle=1">Ver detalle</Link>
+        <Link to="/">Regresar</Link>
+      </MainLayout>
+    </MemoryRouter>
+  );
+  scroll.mockClear();
+  fireEvent.click(screen.getByRole('link', { name: 'Abrir carrito' }));
+  expect(scroll).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'smooth' });
+  expect(scroll).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole('link', { name: 'Ver detalle' }));
+  expect(scroll).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole('link', { name: 'Regresar' }));
+  expect(scroll).toHaveBeenCalledTimes(2);
+});
+
+it('avoids animated route scrolling when reduced motion is preferred', () => {
+  vi.stubGlobal('matchMedia', () => ({ matches: true }));
+  const scroll = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+  render(
+    <MemoryRouter>
+      <MainLayout>
+        <Link to="/checkout/payment">Continuar</Link>
+      </MainLayout>
+    </MemoryRouter>
+  );
+  fireEvent.click(screen.getByRole('link', { name: 'Continuar' }));
+  expect(scroll).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'instant' });
+});

@@ -25,3 +25,14 @@ dist-ssr
 *.sw?
 
 coverage
+
+# Vercel local project settings
+.vercel
+
+# Isolated monitoring evaluation build
+dist-rum-pilot
+
+# Local environment values must never be committed
+.env
+.env.*
+!.env.example

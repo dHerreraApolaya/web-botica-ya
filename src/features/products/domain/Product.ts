@@ -18,12 +18,15 @@ export interface Product {
   readonly presentation: string;
   readonly priceInCents: number;
   readonly inStock: boolean;
+  readonly availableQuantity: number;
+  readonly requiresPrescription: boolean;
   readonly isFeatured: boolean;
 }
 
 export interface ProductSearch {
   readonly query: string;
   readonly category?: ProductCategory;
+  readonly categories?: readonly ProductCategory[];
 }
 
 export interface ProductPage {

@@ -20,7 +20,9 @@
     "prepare": "husky",
     "test": "pnpm test:hooks && vitest run",
     "test:hooks": "node --test scripts/prevent-main-push.test.mjs",
-    "test:coverage": "pnpm test:hooks && vitest run --coverage"
+    "test:coverage": "pnpm test:hooks && vitest run --coverage",
+    "rum:pilot": "vite --config vite.rum.config.ts",
+    "rum:build": "vite build --config vite.rum.config.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

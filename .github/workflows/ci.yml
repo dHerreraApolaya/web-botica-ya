@@ -56,3 +56,6 @@ jobs:
 
       - name: 11. Run Product Tests and Coverage Gate
         run: pnpm test:coverage
+
+      - name: 12. Verify Production Build
+        run: pnpm build

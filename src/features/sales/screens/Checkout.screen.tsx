@@ -25,7 +25,7 @@ const CheckoutScreen: FC<{ facade?: CheckoutFacade }> = ({ facade = checkoutFaca
   const step = locked ? 'review' : accessibleStep(requested, state);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    heading.current?.focus();
+    heading.current?.focus({ preventScroll: true });
   }, [step]);
   if (!state.cart.length)
     return <Navigate to={state.order ? '/confirmacion' : '/carrito'} replace />;

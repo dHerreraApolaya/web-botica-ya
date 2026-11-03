@@ -10,7 +10,8 @@ interface MainLayoutProps {
 export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   const { pathname } = useLocation();
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, left: 0, behavior: reducedMotion ? 'instant' : 'smooth' });
   }, [pathname]);
   return (
     <div className="flex min-h-screen w-full flex-col bg-bg-app text-text-main">

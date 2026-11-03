@@ -88,6 +88,20 @@ describe('product search', () => {
 });
 
 describe('pagination', () => {
+  it('covers all 500 products across 42 pages without omissions or duplicates', () => {
+    const pages = Array.from({ length: 42 }, (_, index) =>
+      paginateProducts(LOCAL_PRODUCTS, index + 1)
+    );
+    expect(pages.flatMap((page) => page.items)).toEqual(LOCAL_PRODUCTS);
+    expect(new Set(pages.flatMap((page) => page.items.map((product) => product.id))).size).toBe(
+      500
+    );
+    expect(
+      pages.slice(0, -1).every((page) => page.items.length === 12 && page.totalPages === 42)
+    ).toBe(true);
+    expect(pages[41].items).toHaveLength(8);
+  });
+
   it('returns distinct pages and a partial final page', () => {
     const first = paginateProducts(LOCAL_PRODUCTS, 1);
     const second = paginateProducts(LOCAL_PRODUCTS, 2);

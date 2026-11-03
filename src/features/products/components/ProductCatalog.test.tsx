@@ -10,6 +10,7 @@ afterEach(() => {
   cleanup();
   salesStore.getState().reset();
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 const submitSearch = (query: string): void => {
@@ -117,7 +118,7 @@ describe('landing product catalog', () => {
     expect(screen.getAllByRole('article')).toHaveLength(8);
   });
 
-  it('browses all 500 products, paginates, and resets the page on a new query', () => {
+  it('shows the 500-product catalog, navigates pages, and resets pagination on a new query', () => {
     render(<LandingScreen />);
     fireEvent.submit(screen.getByRole('search'));
     expect(screen.getByRole('status')).toHaveTextContent('500 productos');
@@ -132,11 +133,20 @@ describe('landing product catalog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
     submitSearch('  ');
     expect(screen.getByText('Página 1 de 42')).toBeInTheDocument();
-    for (let page = 1; page < 42; page += 1) {
-      fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-    }
-    expect(screen.getAllByRole('article')).toHaveLength(8);
+  });
+
+  it('shows the partial final page and disables further navigation', () => {
+    const products = LOCAL_PRODUCTS.slice(0, 26);
+    vi.spyOn(localProductRepository, 'search').mockReturnValue(products);
+    render(<LandingScreen />);
+    fireEvent.submit(screen.getByRole('search'));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    expect(screen.getByText('Página 3 de 3')).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+    expect(screen.getByRole('heading', { name: products[24].name })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Siguiente' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Anterior' })).toBeEnabled();
   });
 
   it('filters by category, highlights selection, and resets pagination', () => {

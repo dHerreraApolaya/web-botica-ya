@@ -14,3 +14,13 @@ El MVP actual utiliza datos locales y no requiere variables de entorno para ejec
 Después de publicar, comprobar la portada, la búsqueda, el carrito, el registro, el inicio de sesión y el pago simulado. Abrir directamente `/registro` y recargar para validar las rutas.
 
 Referencia: https://vercel.com/docs/frameworks/frontend/vite
+
+## Publicaciones manuales
+
+`vercel.json` establece `git.deploymentEnabled: false`: los commits de ramas que contienen esta configuración no crean despliegues automáticos de Vercel, ni de producción ni de preview. Los workflows de validación de GitHub siguen funcionando.
+
+Esta regla se aplica cuando la configuración está subida a GitHub. Integrarla en `develop`, `main` y las ramas activas antes de asumir que todos los pushes están bloqueados: una rama antigua sin la regla puede seguir generando despliegues. No basta con modificar el archivo localmente.
+
+Las publicaciones se inician expresamente desde Vercel (crear despliegue desde una referencia Git o volver a desplegar una versión) o desde su CLI. Verificar siempre la rama y el commit elegidos; desplegar o promover a producción requiere una solicitud explícita del usuario.
+
+No usar un cron ni un workflow de GitHub que publique automáticamente. Fuente: https://vercel.com/docs/project-configuration/git-configuration#turning-off-all-automatic-deployments

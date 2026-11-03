@@ -33,6 +33,25 @@ describe('local catalog', () => {
 });
 
 describe('product search', () => {
+  it.each(['VITNA', 'vitamna', 'vitamiba', 'mina'])(
+    'finds vitamins for partial or misspelled query %s',
+    (query) => {
+      const results = searchProducts(LOCAL_PRODUCTS, { query });
+      expect(results.some((product) => product.name.startsWith('Vitamina C'))).toBe(true);
+      expect(results.some((product) => product.name.startsWith('Vitamina D3'))).toBe(true);
+    }
+  );
+
+  it('keeps numeric codes precise and respects categories for approximate matches', () => {
+    expect(searchProducts(LOCAL_PRODUCTS, { query: 'BY-0001' })).toEqual([LOCAL_PRODUCTS[0]]);
+    expect(
+      searchProducts(LOCAL_PRODUCTS, { query: 'VITNA', category: 'Vitaminas & Suplementos' }).every(
+        (product) => product.category === 'Vitaminas & Suplementos'
+      )
+    ).toBe(true);
+    expect(searchProducts(LOCAL_PRODUCTS, { query: 'zzzzzzzz' })).toEqual([]);
+  });
+
   it('normalizes accents, case, and repeated whitespace', () => {
     expect(normalizeSearch('  MAMÁ   & BEBÉ  ')).toBe('mama & bebe');
   });
@@ -69,6 +88,20 @@ describe('product search', () => {
 });
 
 describe('pagination', () => {
+  it('covers all 500 products across 42 pages without omissions or duplicates', () => {
+    const pages = Array.from({ length: 42 }, (_, index) =>
+      paginateProducts(LOCAL_PRODUCTS, index + 1)
+    );
+    expect(pages.flatMap((page) => page.items)).toEqual(LOCAL_PRODUCTS);
+    expect(new Set(pages.flatMap((page) => page.items.map((product) => product.id))).size).toBe(
+      500
+    );
+    expect(
+      pages.slice(0, -1).every((page) => page.items.length === 12 && page.totalPages === 42)
+    ).toBe(true);
+    expect(pages[41].items).toHaveLength(8);
+  });
+
   it('returns distinct pages and a partial final page', () => {
     const first = paginateProducts(LOCAL_PRODUCTS, 1);
     const second = paginateProducts(LOCAL_PRODUCTS, 2);

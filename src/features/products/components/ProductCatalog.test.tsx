@@ -1,10 +1,17 @@
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LandingScreen } from '../../landing/screens/Landing.screen';
 import { ProductCard } from './ProductCard.component';
+import { localProductRepository } from '../data/localProduct.repository';
+import { salesStore } from '../../sales/state/sales.store';
 import { LOCAL_PRODUCTS } from '../data/products.data';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  salesStore.getState().reset();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 const submitSearch = (query: string): void => {
   fireEvent.change(screen.getByRole('searchbox'), { target: { value: query } });
@@ -14,6 +21,80 @@ const submitSearch = (query: string): void => {
 const results = (): HTMLElement => screen.getByRole('region', { name: 'Resultados de búsqueda' });
 
 describe('landing product catalog', () => {
+  it('debounces rapid typing, skips repeated filtering, and cancels pending work on submit and clear', () => {
+    vi.useFakeTimers();
+    const search = vi.spyOn(localProductRepository, 'search');
+    render(<LandingScreen />);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'para' } });
+    act(() => vi.advanceTimersByTime(200));
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    act(() => vi.advanceTimersByTime(299));
+    expect(search).not.toHaveBeenCalled();
+    act(() => vi.advanceTimersByTime(1));
+    expect(search).toHaveBeenCalledTimes(1);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'vitamina' } });
+    expect(search).toHaveBeenCalledTimes(1);
+    fireEvent.submit(screen.getByRole('search'));
+    expect(search).toHaveBeenCalledTimes(2);
+    act(() => vi.advanceTimersByTime(300));
+    expect(search).toHaveBeenCalledTimes(2);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Limpiar búsqueda' }));
+    act(() => vi.advanceTimersByTime(300));
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    expect(search).toHaveBeenCalledTimes(2);
+    search.mockRestore();
+  });
+
+  it('toggles the selected category off without clearing a typed query', () => {
+    render(<LandingScreen />);
+    const category = screen.getByRole('button', { name: 'Medicamentos' });
+    fireEvent.click(category);
+    fireEvent.click(category);
+    expect(category).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    fireEvent.click(category);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
+    fireEvent.click(category);
+    expect(category).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('searchbox')).toHaveValue('parace');
+    expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
+  });
+
+  it('finds partial matches after a typing pause and restores featured products when cleared', () => {
+    vi.useFakeTimers();
+    render(<LandingScreen />);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'PARACE' } });
+    expect(
+      screen.queryByRole('region', { name: 'Resultados de búsqueda' })
+    ).not.toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(300));
+    expect(within(results()).getAllByRole('article').length).toBeGreaterThan(0);
+    expect(
+      within(results())
+        .getAllByRole('article')
+        .every((card) => card.textContent?.includes('Paracetamol'))
+    ).toBe(true);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '' } });
+    expect(screen.getByRole('heading', { name: 'Productos destacados' })).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(8);
+  });
+
+  it('retains the category filter when typing a partial match and submitting', () => {
+    render(<LandingScreen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Medicamentos' }));
+    submitSearch('parace');
+    expect(screen.getByRole('button', { name: 'Medicamentos' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(
+      within(results())
+        .getAllByRole('article')
+        .every((card) => card.textContent?.includes('Paracetamol'))
+    ).toBe(true);
+  });
+
   it('shows eight featured products in the initial view', () => {
     render(<LandingScreen />);
     expect(screen.getAllByRole('article')).toHaveLength(8);
@@ -37,9 +118,9 @@ describe('landing product catalog', () => {
     expect(screen.getAllByRole('article')).toHaveLength(8);
   });
 
-  it('browses all 500 products, paginates, and resets the page on a new query', () => {
+  it('shows the 500-product catalog, navigates pages, and resets pagination on a new query', () => {
     render(<LandingScreen />);
-    fireEvent.click(screen.getByRole('button', { name: 'Buscar' }));
+    fireEvent.submit(screen.getByRole('search'));
     expect(screen.getByRole('status')).toHaveTextContent('500 productos');
     expect(screen.getAllByRole('article')).toHaveLength(12);
     expect(screen.getByRole('button', { name: 'Anterior' })).toBeDisabled();
@@ -52,11 +133,20 @@ describe('landing product catalog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
     submitSearch('  ');
     expect(screen.getByText('Página 1 de 42')).toBeInTheDocument();
-    for (let page = 1; page < 42; page += 1) {
-      fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-    }
-    expect(screen.getAllByRole('article')).toHaveLength(8);
+  });
+
+  it('shows the partial final page and disables further navigation', () => {
+    const products = LOCAL_PRODUCTS.slice(0, 26);
+    vi.spyOn(localProductRepository, 'search').mockReturnValue(products);
+    render(<LandingScreen />);
+    fireEvent.submit(screen.getByRole('search'));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+    expect(screen.getByText('Página 3 de 3')).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+    expect(screen.getByRole('heading', { name: products[24].name })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Siguiente' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Anterior' })).toBeEnabled();
   });
 
   it('filters by category, highlights selection, and resets pagination', () => {
@@ -89,6 +179,17 @@ describe('landing product catalog', () => {
 });
 
 describe('product card', () => {
+  it('turns the stock badge red when the cart exhausts stock and restores it when units are removed', () => {
+    const product = { ...LOCAL_PRODUCTS[0], availableQuantity: 1 };
+    render(<ProductCard product={product} />);
+    expect(screen.getByText('Disponible')).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: `Agregar ${product.name} al carrito` }));
+    expect(screen.getByText('Agotado')).toHaveClass('bg-error', 'text-primary-contrast');
+    expect(screen.queryByText('Disponible')).not.toBeInTheDocument();
+    act(() => salesStore.getState().removeProduct(product.id));
+    expect(screen.getByText('Disponible')).not.toHaveClass('bg-error');
+  });
+
   it('shows local identity, PEN prices, presentation, and stock status', () => {
     const product = LOCAL_PRODUCTS[0];
     render(<ProductCard product={product} />);
@@ -102,6 +203,6 @@ describe('product card', () => {
 
   it('distinguishes unavailable products', () => {
     render(<ProductCard product={{ ...LOCAL_PRODUCTS[0], inStock: false }} />);
-    expect(screen.getByText('Agotado')).toBeInTheDocument();
+    expect(screen.getAllByText('Agotado')).toHaveLength(2);
   });
 });

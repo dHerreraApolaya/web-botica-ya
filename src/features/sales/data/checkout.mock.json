@@ -1,0 +1,13 @@
+{
+  "deliveryFeeInCents": 800,
+  "districts": ["Barranco (demo)", "Chorrillos (demo)", "Surco (demo)"],
+  "pharmacies": [
+    {
+      "id": "demo-centro",
+      "name": "Botica Demo Centro",
+      "address": "Av. Ejemplo 100, Distrito Centro",
+      "schedule": "Lunes a sábado, 09:00 a 20:00 (referencial)",
+      "available": true
+    }
+  ]
+}

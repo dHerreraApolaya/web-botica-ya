@@ -6,12 +6,20 @@ export default defineConfig({
   plugins: [react()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   test: {
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
       provider: 'v8',
       include: [
         'src/features/products/**/*.{ts,tsx}',
+        'src/features/monitoring/rumPilot.util.ts',
+        'src/features/sales/**/*.{ts,tsx}',
+        'src/components/ui/molecules/CheckoutField.component.tsx',
+        'src/features/user/**/*.{ts,tsx}',
+        'src/components/ui/molecules/FormField.component.tsx',
+        'src/components/ui/organisms/Header.component.tsx',
+        'src/App.tsx',
         'src/features/landing/screens/Landing.screen.tsx',
         'src/features/landing/components/HeroSection.component.tsx',
       ],

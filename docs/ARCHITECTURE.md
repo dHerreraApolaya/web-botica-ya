@@ -49,8 +49,5 @@
 
 ## Observability Policy
 
-All new or modified features must follow [the observability policy](./OBSERVABILITY.md).
-Their specification must define relevant logs, metrics and traces (or justify their absence),
-using module-owned semantic constants and provider-independent ports. Funnel and UX events
-use separate contracts and purposes. Sensitive data, free-form errors and dynamic event names
-must never be exported. No production transport is enabled by documenting an event.
+Follow [the canonical observability policy](./OBSERVABILITY.md) for instrumentation,
+semantic constants, privacy and provider integration.

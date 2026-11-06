@@ -15,8 +15,5 @@ This directory contains the single source of truth for all business logic, requi
 
 ## Observability acceptance criteria
 
-Each feature specification must describe its monitoring goal and owner, semantic constants,
-log severity, trace boundaries, permitted fields, volume limits, retention and privacy tests,
-or justify why instrumentation is unnecessary. Apply [docs/OBSERVABILITY.md](../docs/OBSERVABILITY.md).
-Distinguish technical failures, expected validation outcomes, UX and funnel events. Document
-what is actually implemented separately from proposed signals and disabled integrations.
+Use the [observability policy](../docs/OBSERVABILITY.md#criterios-de-revisión-y-pruebas)
+to define feature-specific monitoring acceptance criteria; reference shared rules instead of copying them.

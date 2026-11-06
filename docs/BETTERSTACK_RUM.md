@@ -65,3 +65,11 @@ No ampliar a la tienda hasta revisar la configuración efectiva, el DPA, acceso 
 Referencias:
 https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
 https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html
+
+## Actualización: requisito de anonimización
+
+El piloto confirmó recepción de `session-start` con IP, ubicación e identificador de sesión.
+El tag directo queda bloqueado en código porque no satisface la política actual.
+Las instrucciones anteriores de activación se conservan como historia de la evaluación;
+no autorizan reactivar el SDK. Ver `docs/OBSERVABILITY.md` para la arquitectura vigente,
+limitaciones y condiciones pendientes del backend de anonimización.

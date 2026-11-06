@@ -46,3 +46,11 @@
 - **Adaptability:** All interfaces MUST adapt gracefully to Tablet (768px - 1024px) and Mobile (<768px) views.
 - **Tailwind Strategy:** Use responsive modifiers (`sm:`, `md:`, `lg:`, `xl:`) for fluid layouts. Touch targets MUST be at least 44x44px on mobile screens.
 - **No Overflow Rule:** Horizontal scroll (`overflow-x`) is strictly forbidden on any device viewport.
+
+## Observability Policy
+
+All new or modified features must follow [the observability policy](./OBSERVABILITY.md).
+Their specification must define relevant logs, metrics and traces (or justify their absence),
+using module-owned semantic constants and provider-independent ports. Funnel and UX events
+use separate contracts and purposes. Sensitive data, free-form errors and dynamic event names
+must never be exported. No production transport is enabled by documenting an event.

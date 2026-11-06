@@ -46,3 +46,8 @@
 - **Adaptability:** All interfaces MUST adapt gracefully to Tablet (768px - 1024px) and Mobile (<768px) views.
 - **Tailwind Strategy:** Use responsive modifiers (`sm:`, `md:`, `lg:`, `xl:`) for fluid layouts. Touch targets MUST be at least 44x44px on mobile screens.
 - **No Overflow Rule:** Horizontal scroll (`overflow-x`) is strictly forbidden on any device viewport.
+
+## Observability Policy
+
+Follow [the canonical observability policy](./OBSERVABILITY.md) for instrumentation,
+semantic constants, privacy and provider integration.

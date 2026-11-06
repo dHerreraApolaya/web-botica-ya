@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { canStartRumPilot, startRumPilot } from './rumPilot.util';
+import { canStartRumPilot, getRumPilotBlocker, startRumPilot } from './rumPilot.util';
 import { rumEnvSchema } from '@/config/env.config';
 
 const config = {
@@ -56,24 +56,35 @@ it('blocks production, query strings, hashes, referrers and privacy opt-outs', (
     false
   );
 });
-it('loads only the fixed vendor URL once and initializes without automatic pageviews', async () => {
-  vi.stubGlobal('location', location);
-  const result = startRumPilot(config, true);
-  const script = document.getElementById('betterstack-rum-pilot') as HTMLScriptElement;
-  expect(script.src).toBe('https://betterstack.net/b.js?t=synthetic-public-tag-token');
-  expect(script.referrerPolicy).toBe('no-referrer');
-  expect((window as Window & { betterstack?: { q: unknown[][] } }).betterstack?.q).toEqual([
-    ['config', { crossDomainCookie: false }],
-    ['init', { environment: 'isolated-evaluation', autoPageview: false, debug: false }],
-  ]);
-  script.dispatchEvent(new Event('load'));
-  await expect(result).resolves.toBe(true);
-  await expect(startRumPilot(config, true)).resolves.toBe(false);
+it('explains the blocker without exposing configuration values', () => {
+  expect(getRumPilotBlocker(config, location, signals)).toBeUndefined();
+  expect(getRumPilotBlocker({ ...config, enabled: false }, location, signals)).toContain(
+    'desactivado'
+  );
+  expect(getRumPilotBlocker({ ...config, privacyReviewed: false }, location, signals)).toContain(
+    'privacidad'
+  );
+  expect(getRumPilotBlocker({ ...config, applicationToken: '' }, location, signals)).toContain(
+    'Application Token'
+  );
+  expect(getRumPilotBlocker(config, { ...location, pathname: '/' }, signals)).toContain(
+    'exactamente'
+  );
+  expect(getRumPilotBlocker(config, { ...location, search: '?test' }, signals)).toContain(
+    'parámetros'
+  );
+  expect(getRumPilotBlocker(config, location, { ...signals, doNotTrack: 'yes' })).toContain(
+    'no rastrear'
+  );
+  expect(
+    getRumPilotBlocker(config, location, { ...signals, referrer: 'https://example.test/' })
+  ).toContain('pestaña nueva');
 });
-it('does not throw or expose the token when the remote script fails', async () => {
+it('blocks direct vendor collection even with valid configuration and consent', async () => {
   vi.stubGlobal('location', location);
-  const result = startRumPilot(config, true);
-  document.getElementById('betterstack-rum-pilot')!.dispatchEvent(new Event('error'));
-  await expect(result).resolves.toBe(false);
+  const onBlocked = vi.fn();
+  await expect(startRumPilot(config, true, onBlocked)).resolves.toBe(false);
+  expect(onBlocked).toHaveBeenCalledWith(expect.stringContaining('backend'));
   expect(document.getElementById('betterstack-rum-pilot')).toBeNull();
+  expect((window as Window & { betterstack?: unknown }).betterstack).toBeUndefined();
 });

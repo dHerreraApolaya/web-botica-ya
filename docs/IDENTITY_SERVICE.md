@@ -11,6 +11,6 @@ For local development, run `pnpm dev` in this frontend. Vite proxies `/v1` to
 `http://127.0.0.1:3001`. In production, configure the reverse proxy to route `/v1`
 to Identity on the same site so refresh cookies retain their security policy.
 
-The PostgreSQL database remains `boticaya_identity`. Extracting the source code
-does not migrate or delete database records. Secrets and user data are not
-stored in either Git repository.
+Use `boticaya_dev` for local PostgreSQL. Identity uses the `public` schema
+and Orders uses the `orders` schema. Keep credentials in local environment
+configuration.

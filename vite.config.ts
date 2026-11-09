@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       proxy: {
+        '/v1/orders': { target: 'http://127.0.0.1:3002', changeOrigin: true },
         '/v1': { target: 'http://127.0.0.1:3001', changeOrigin: true },
       },
     },

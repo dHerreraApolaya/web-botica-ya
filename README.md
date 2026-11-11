@@ -1,5 +1,10 @@
 # 🚀 Web Botica Ya - Frontend Master Index
 
+The Express backend candidate and PostgreSQL setup are documented in
+[`api-botica-ya/README.md`](./api-botica-ya/README.md). It preserves the initial
+Spring catalog contract. Java remains until verification against the existing
+`boticaya_dev`; order reception is prepared but disabled by default.
+
 Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
 
 ---

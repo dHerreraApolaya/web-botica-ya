@@ -1,4 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { once } from 'node:events';
@@ -78,6 +81,68 @@ afterAll(async () => {
 });
 
 describe('Express with real PostgreSQL', () => {
+  it('receives orders with a restricted role and runs the local smoke test without double reservations', async () => {
+    await pool.query('CREATE ROLE boticaya_orders_app NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE');
+    const restricted = new Pool({
+      connectionString: databaseUrl,
+      options: '-c role=boticaya_orders_app',
+    });
+    let restrictedServer: Server | undefined;
+    try {
+      const permissions = await readFile(
+        new URL('../sql/local-orders-permissions.sql', import.meta.url),
+        'utf8'
+      );
+      const client = await pool.connect();
+      try {
+        await client.query(permissions);
+      } finally {
+        await client.query('ROLLBACK');
+        client.release();
+      }
+      restrictedServer = createApp(restricted, { ordersEnabled: true }).listen(0, '127.0.0.1');
+      await once(restrictedServer, 'listening');
+      const restrictedUrl = `http://127.0.0.1:${(restrictedServer.address() as AddressInfo).port}`;
+      const key = randomUUID();
+      const runSmoke = () =>
+        promisify(execFile)(
+          process.execPath,
+          [fileURLToPath(new URL('../scripts/verify-local-orders.mjs', import.meta.url))],
+          {
+            env: { ...process.env, BOTICAYA_API_URL: restrictedUrl, BOTICAYA_TEST_ORDER_KEY: key },
+          }
+        );
+      const first = await runSmoke();
+      expect(JSON.parse(first.stdout.trim().split('\n').at(-1) ?? '{}')).toMatchObject({
+        before: 5,
+        after: 4,
+        afterRetry: 4,
+        replayed: false,
+      });
+      const replay = await runSmoke();
+      expect(JSON.parse(replay.stdout.trim().split('\n').at(-1) ?? '{}')).toMatchObject({
+        before: 4,
+        after: 4,
+        afterRetry: 4,
+        replayed: true,
+      });
+      expect((await pool.query('SELECT * FROM public.orders')).rows).toHaveLength(1);
+      for (const sql of [
+        'DELETE FROM public.products',
+        'DROP TABLE public.products',
+        'UPDATE public.products SET price_in_cents = 0',
+        'DELETE FROM public.orders',
+      ])
+        await expect(restricted.query(sql)).rejects.toMatchObject({ code: '42501' });
+    } finally {
+      if (restrictedServer)
+        await new Promise<void>((resolve) => restrictedServer?.close(() => resolve()));
+      await restricted.end();
+      await pool.query('DROP OWNED BY boticaya_orders_app');
+      await pool.query('DROP ROLE boticaya_orders_app');
+    }
+  });
+
   it('refuses to create a parallel order model when the separate order service exists', async () => {
     const client = await pool.connect();
     try {

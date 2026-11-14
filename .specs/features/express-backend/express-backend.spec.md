@@ -30,6 +30,12 @@ the previous frontend-only specifications continue to describe the mock UI.
 
 ## Initial inventory and order API
 
+- The developer selected local `boticaya_dev` as the first inventory/order test
+  target. Use a separate `boticaya_orders_app` account with availability updates
+  and order insert/read grants; retain the catalog account's read-only role.
+- The local smoke command requires an explicit UUID key, submits one unit of
+  BY-0001 and retries the same request without another stock decrement. Reusing
+  the same key on a later invocation must return the existing order unchanged.
 - The separate Supabase order service added in `978d417` is not this candidate's
   persistence model. Refuse the candidate migration when `orders.orders` exists;
   reconcile UUID/text product identifiers and lifecycle contracts before cutover

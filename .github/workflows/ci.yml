@@ -59,3 +59,40 @@ jobs:
 
       - name: 12. Verify Production Build
         run: pnpm build
+
+  express-api:
+    name: Express API and PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: boticaya_test
+          POSTGRES_DB: boticaya_api_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U boticaya_test -d boticaya_api_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      BOTICAYA_TEST_DATABASE_URL: postgresql://boticaya_test@127.0.0.1:5432/boticaya_api_test
+    defaults:
+      run:
+        working-directory: api-botica-ya
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: api-botica-ya/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test:coverage
+      - run: pnpm build

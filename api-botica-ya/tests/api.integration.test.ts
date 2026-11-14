@@ -78,6 +78,24 @@ afterAll(async () => {
 });
 
 describe('Express with real PostgreSQL', () => {
+  it('refuses to create a parallel order model when the separate order service exists', async () => {
+    const client = await pool.connect();
+    try {
+      await client.query('CREATE SCHEMA orders');
+      await client.query('CREATE TABLE orders.orders (id UUID PRIMARY KEY)');
+      const migration = await readFile(new URL('../sql/001-orders.sql', import.meta.url), 'utf8');
+      await expect(client.query(migration)).rejects.toThrow('Existing orders.orders detected');
+      await client.query('ROLLBACK');
+      expect((await client.query('SELECT * FROM orders.orders')).rows).toEqual([]);
+      expect(await availableQuantity()).toBe(5);
+    } finally {
+      await client.query('ROLLBACK');
+      await client.query('DROP TABLE IF EXISTS orders.orders');
+      await client.query('DROP SCHEMA IF EXISTS orders');
+      client.release();
+    }
+  });
+
   it('returns exactly the Spring catalog contract and BY-0001 with five units', async () => {
     const response = await fetch(`${baseUrl}/api/products`);
     expect(response.status).toBe(200);

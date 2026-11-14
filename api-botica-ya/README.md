@@ -60,6 +60,10 @@ pnpm migrate
 ```
 
 The migration is transactional and repeatable and does not reset product data.
+It refuses to run if `orders.orders` already exists. The Supabase migration now
+present on `develop` defines a separate order service with UUID product IDs and
+a different lifecycle. This candidate uses the original catalog's text IDs;
+reconcile those contracts before connecting order reception to that service.
 Set `BOTICAYA_ORDERS_ENABLED=true` and restart to expose `POST /api/orders`.
 Keep it disabled until the cutover gate is satisfied. Example request:
 

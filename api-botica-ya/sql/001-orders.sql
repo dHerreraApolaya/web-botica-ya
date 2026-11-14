@@ -1,5 +1,13 @@
 BEGIN;
 
+DO $compatibility$
+BEGIN
+    IF to_regclass('orders.orders') IS NOT NULL THEN
+        RAISE EXCEPTION 'Existing orders.orders detected; reconcile the order service contract before applying the Express candidate schema';
+    END IF;
+END
+$compatibility$;
+
 CREATE TABLE IF NOT EXISTS public.orders (
     id UUID PRIMARY KEY,
     idempotency_key UUID NOT NULL UNIQUE,

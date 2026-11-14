@@ -26,6 +26,10 @@ the previous frontend-only specifications continue to describe the mock UI.
 
 ## Initial inventory and order API
 
+- The separate Supabase order service added in `978d417` is not this candidate's
+  persistence model. Refuse the candidate migration when `orders.orders` exists;
+  reconcile UUID/text product identifiers and lifecycle contracts before cutover
+  to that service. Do not create a parallel public order model there.
 - `GET /api/inventory` returns product ID, SKU, available quantity and derived
   in-stock flag in ID order. Inventory reads do not change stock.
 - Prepare `POST /api/orders` behind `BOTICAYA_ORDERS_ENABLED=false` by default.

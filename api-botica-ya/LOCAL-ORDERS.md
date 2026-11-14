@@ -72,3 +72,25 @@ SELECT order_id, product_id, quantity, unit_price_in_cents FROM public.order_ite
 
 This is a loopback development workflow. The frontend still uses its demo
 adapters, and no payment or prescription approval is implied by receipt.
+
+## Operator verification
+
+On 2026-11-14, the developer executed this workflow on their Windows machine
+against the existing local `boticaya_dev`. After applying the order schema and
+restricted account grants, `pnpm.cmd run verify:orders` completed successfully:
+
+```json
+{
+  "status": "pending",
+  "before": 5,
+  "after": 4,
+  "afterRetry": 4,
+  "replayed": false
+}
+```
+
+The terminal screenshot supplied by the developer is the evidence for this local
+verification. The cloud environment independently passed 39 backend tests,
+including the smoke command and denied operations under the restricted role.
+The pending test order remains reserved in the local database; no stock reset
+or automatic cancellation was performed.

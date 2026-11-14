@@ -64,6 +64,9 @@ legitimately reduce the quantity below five.
 
 ## Inventory and order reception
 
+For the chosen local development path, follow [LOCAL-ORDERS.md](./LOCAL-ORDERS.md)
+to provision a restricted order account and verify one reservation plus retries.
+
 `GET /api/inventory` reads current availability. After catalog verification, prepare
 the order tables explicitly:
 

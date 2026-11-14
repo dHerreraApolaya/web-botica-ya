@@ -1,8 +1,8 @@
-# Botica Ya API — Express candidate
+# Botica Ya API — Node.js + Express
 
-Node.js >=22.12.0, pnpm >=9 and PostgreSQL. The Express catalog keeps the Spring
-route, SQL projection, JSON shape, database defaults and port. Java is retained
-until the existing developer database has been verified through Express.
+Node.js >=22.12.0, pnpm >=9 and PostgreSQL. Express serves the catalog using the
+existing route, SQL projection, JSON shape, database defaults and port. The backend
+runs entirely on Node.js; Maven and Java are no longer required.
 
 ## Start the catalog
 
@@ -23,32 +23,44 @@ pnpm build
 pnpm start
 ```
 
-Express binds to `127.0.0.1:8081` by default. Use another `PORT` while Spring occupies 8081. Startup checks PostgreSQL; no table creation, seeding or stock reset happens
+On Windows PowerShell, use `pnpm.cmd` if execution policy blocks `pnpm.ps1`.
+Save the local `.env` before starting the server. Each developer supplies their own
+credentials; the file is ignored by Git. A catalog-only account needs `CONNECT`
+on `boticaya_dev`, `USAGE` on `public` and `SELECT` on `public.products`.
+
+Express binds to `127.0.0.1:8081` by default. Set `PORT=8082` to use the port from
+the operator verification below. Startup checks PostgreSQL; no table creation, seeding or stock reset happens
 when the server starts. `dev` builds once and watches the compiled server; rebuild
 TypeScript after editing source.
 
-## Verify the cutover before removing Java
+## Catalog verification
 
-Against the existing `boticaya_dev`, with order reception still disabled:
+On 2026-11-14, the developer ran Node.js + Express on their Windows machine,
+connected to their existing `localhost:5432/boticaya_dev` using the dedicated
+`boticaya_catalog_app` account. Their browser screenshot of
+`http://127.0.0.1:8082/api/products` showed the bare JSON array with
+`sku: "BY-0001"`, `availableQuantity: 5` and all eleven expected fields. This is
+operator-provided evidence from the original database, separate from the isolated
+automated tests. The Java backend files were removed after this verification.
+
+To repeat the read-only contract check against the running Express instance:
 
 ```sh
 pnpm verify:catalog
 ```
 
 The command requires a bare array, the original eleven fields and types, and
-exactly one `BY-0001` with five units. It only reads the API. To compare both full
-responses while Spring remains on 8081 and Express runs on 8082:
+exactly one `BY-0001` with five units. It only reads the API. For port 8082 in
+Windows PowerShell, run in a second terminal inside `api-botica-ya`:
 
-```sh
-BOTICAYA_API_URL=http://127.0.0.1:8082 BOTICAYA_SPRING_URL=http://127.0.0.1:8081 pnpm verify:catalog
+```powershell
+$env:BOTICAYA_API_URL = 'http://127.0.0.1:8082'
+pnpm.cmd verify:catalog
 ```
 
-Only after that succeeds against the original database, remove `pom.xml`, Maven
-wrappers, `.mvn`, `src/main`, `src/test` and Java-specific ignore/attribute files.
-Keep `sql/catalogo-prueba.sql` for isolated tests, but do not run it to manufacture
-cutover evidence in the existing database. Record which instance was verified
-without publishing credentials, then mark the migration PR ready for review.
-Do not merge automatically.
+Keep `sql/catalogo-prueba.sql` for isolated tests. Never reset the developer's
+stock to manufacture verification evidence. A future order reservation can
+legitimately reduce the quantity below five.
 
 ## Inventory and order reception
 
@@ -65,7 +77,10 @@ present on `develop` defines a separate order service with UUID product IDs and
 a different lifecycle. This candidate uses the original catalog's text IDs;
 reconcile those contracts before connecting order reception to that service.
 Set `BOTICAYA_ORDERS_ENABLED=true` and restart to expose `POST /api/orders`.
-Keep it disabled until the cutover gate is satisfied. Example request:
+The catalog-only account cannot receive orders or run migrations. Use a separately
+provisioned account with the necessary permissions for order development, while
+keeping order reception disabled until its schema and access are configured.
+Example request:
 
 ```http
 POST /api/orders

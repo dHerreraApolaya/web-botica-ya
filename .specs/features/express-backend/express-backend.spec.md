@@ -21,8 +21,12 @@ the previous frontend-only specifications continue to describe the mock UI.
   is still available on a separate port, compare the complete JSON with
   `BOTICAYA_SPRING_URL`.
 - A disposable PostgreSQL test database seeded from `catalogo-prueba.sql` proves
-  behavior but does not prove access to the developer's existing database. Retain
-  Java and keep the migration in draft until that distinction is resolved.
+  behavior but does not prove access to the developer's existing database.
+- On 2026-11-14, the developer supplied browser evidence of Node.js + Express
+  serving the original local `boticaya_dev` on port 8082, with `BY-0001` and five
+  units. The JSON contained all eleven expected fields. Java/Maven files were
+  removed after this operator verification; a full live comparison against a
+  second backend was not performed by the cloud agent.
 
 ## Initial inventory and order API
 

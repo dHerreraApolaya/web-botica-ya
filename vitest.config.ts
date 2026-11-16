@@ -14,6 +14,7 @@ export default defineConfig({
       include: [
         'src/features/products/**/*.{ts,tsx}',
         'src/features/monitoring/rumPilot.util.ts',
+        'src/shared/observability/**/*.ts',
         'src/features/sales/**/*.{ts,tsx}',
         'src/components/ui/molecules/CheckoutField.component.tsx',
         'src/features/user/**/*.{ts,tsx}',

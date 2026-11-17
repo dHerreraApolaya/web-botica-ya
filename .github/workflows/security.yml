@@ -2,7 +2,7 @@ name: Security
 on:
   pull_request:
   push:
-    branches: [main, develop]
+    branches: [main, develop, pre-develop]
   workflow_dispatch:
   schedule:
     - cron: '23 8 * * 1'
@@ -44,4 +44,6 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version-file: .nvmrc
-      - run: pnpm audit --audit-level high
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: node --test scripts/audit-dependencies.test.mjs
+      - run: node scripts/audit-dependencies.mjs

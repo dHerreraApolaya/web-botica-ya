@@ -44,3 +44,7 @@ Use scoped PRs and independent human review. Generated code is untrusted until i
 Ruleset 27438653 protects main and develop with one independent approval, stale approval dismissal, resolved discussions, strict GitHub Actions quality/security checks, no bypass actors, no force pushes and no deletion. All three checks passed before enforcement. Repository secret protection, push protection, dependency graph, Dependabot alerts, malware alerts and private reporting are enabled. CODEOWNERS identifies review ownership; mandatory code-owner approval awaits an independent team assignment. Versioned ruleset JSON records verified settings and does not apply itself.
 
 Dependency audit after compatible updates: no high or critical findings; five low/moderate advisories remain for follow-up. The exact historical Gitleaks exception records a provenance commit hash, not a credential. No directory-wide exception was introduced.
+
+## Personal demonstration exception
+
+The owner authorized a narrowly scoped, expiring development dependency exception on pre-develop. See [DEMO_SECURITY_EXCEPTION.md](DEMO_SECURITY_EXCEPTION.md) for the exact advisory, owner, scope and expiry. Main/develop remain strict; all complete/runtime audit reports and secret scans remain active.

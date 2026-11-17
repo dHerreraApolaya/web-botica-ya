@@ -1,0 +1,15 @@
+.git
+.vercel
+.env*
+**/.env*
+node_modules
+coverage
+dist-rum-pilot
+api-botica-ya
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+dist

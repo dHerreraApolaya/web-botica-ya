@@ -38,3 +38,9 @@ Code generated must comply with static analysis scanners (Fortify, SonarQube, JF
 ## Collaborative and AI-assisted changes
 
 Use scoped PRs and independent human review. Generated code is untrusted until inspected and tested. Never include credentials or patient data in prompts or logs. Gitleaks is required locally for commits; CI scans history and audits dependencies. Install the official CLI before committing. Secret scan and Dependency audit should become required checks only after a successful run. Repository secret scanning and push protection require separate GitHub configuration. `.gitignore` and hooks alone do not enforce server-side protection. Sensitive file checks are defense in depth, not complete secret detection. Rotate previously exposed real credentials.
+
+## Verified rollout — 2026-11-17
+
+Ruleset 27438653 protects main and develop with one independent approval, stale approval dismissal, resolved discussions, strict GitHub Actions quality/security checks, no bypass actors, no force pushes and no deletion. All three checks passed before enforcement. Repository secret protection, push protection, dependency graph, Dependabot alerts, malware alerts and private reporting are enabled. CODEOWNERS identifies review ownership; mandatory code-owner approval awaits an independent team assignment. Versioned ruleset JSON records verified settings and does not apply itself.
+
+Dependency audit after compatible updates: no high or critical findings; five low/moderate advisories remain for follow-up. The exact historical Gitleaks exception records a provenance commit hash, not a credential. No directory-wide exception was introduced.

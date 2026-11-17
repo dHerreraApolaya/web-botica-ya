@@ -1,5 +1,6 @@
 import { lazy, Suspense, type FC } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import type { CatalogRepository } from './features/products/domain/Catalog';
 import { LandingScreen } from './features/landing/screens/Landing.screen';
 import { MainLayout } from './layouts/MainLayout.layout';
 
@@ -8,7 +9,7 @@ const CheckoutScreen = lazy(() => import('./features/sales/screens/Checkout.scre
 const ConfirmationScreen = lazy(() => import('./features/sales/screens/Confirmation.screen'));
 const UserAccessScreen = lazy(() => import('./features/user/screens/UserAccess.screen'));
 
-const App: FC = () => (
+const App: FC<{ catalogRepository?: CatalogRepository }> = ({ catalogRepository }) => (
   <BrowserRouter>
     <MainLayout>
       <Suspense
@@ -19,7 +20,7 @@ const App: FC = () => (
         }
       >
         <Routes>
-          <Route path="/" element={<LandingScreen />} />
+          <Route path="/" element={<LandingScreen repository={catalogRepository} />} />
           <Route path="/carrito" element={<CartScreen />} />
           <Route path="/checkout/:step?" element={<CheckoutScreen />} />
           <Route path="/confirmacion" element={<ConfirmationScreen />} />

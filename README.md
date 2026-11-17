@@ -1,10 +1,14 @@
 # 🚀 Web Botica Ya - Frontend Master Index
 
-The Node.js + Express backend and PostgreSQL setup are documented in
-[`api-botica-ya/README.md`](./api-botica-ya/README.md). It preserves the initial
-catalog contract. The developer verified `BY-0001` with five units from the existing
-`boticaya_dev` through Express; Java has been removed. Order reception is prepared
-but disabled by default while its schema and access are configured.
+The Express microservice, PostgreSQL migrations and database tests live in the separate
+[boticaya-catalog-service repository](https://github.com/dHerreraApolaya/boticaya-catalog-service).
+Frontend CI validates this application and scans secrets/dependencies; backend CI runs in that repository.
+The historical `api-botica-ya/` directory is not the maintained service and is not executed by frontend CI.
+
+The listing reads the real API through same-origin `/api`. The owner-approved 500-product fictional
+dataset is loaded in Supabase development, with explicit demo notices and no real payments/deliveries.
+Official-source reuse and real commercial publication remain separate pending work. See
+[Catalog API integration](.specs/features/catalog-api-integration/catalog-api-integration.spec.md).
 
 Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
 
@@ -31,7 +35,7 @@ This repository uses a structured documentation architecture. All contributors a
 
 | Layer                  | Technology                                                        | Specification / Notes                                                  |
 | :--------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| **Runtime & Engine**   | Node.js `>=22.12.0`                                               | Controlled via [`.nvmrc`](./.nvmrc)                                    |
+| **Runtime & Engine**   | Node.js (see `package.json` engines)                              | Controlled via [`.nvmrc`](./.nvmrc)                                    |
 | **Package Manager**    | `pnpm` `>=9.0.0` (v9.15.4)                                        | Strictly enforced; `npm`/`yarn` are blocked                            |
 | **Core Framework**     | React 19 + TypeScript (Strict)                                    | Bundled with Vite                                                      |
 | **Client State**       | Zustand (`zustand`)                                               | Lightweight centralized store for global UI state                      |
@@ -126,7 +130,7 @@ web-botica-ya/
 
 ### Prerequisites
 
-- **Node.js:** `>=22.12.0` (Switch using `nvm use` or `nvm use 22`)
+- **Node.js:** use the version pinned in `.nvmrc` with `nvm use`; it must satisfy `package.json` engines.
 - **pnpm:** `>=9.0.0` (v9.15.4 recommended)
 
 ### Installation & Setup
@@ -165,3 +169,5 @@ Every Pull Request and push to `main` or `develop` triggers the automated CI Qua
 3. **Static Analysis & Linting:** Validates code against ESLint rules (`pnpm lint`).
 4. **Code Formatting Validation:** Checks Prettier styling (`pnpm format:check`).
 5. **Security & Coverage Threshold:** Requires passing test suites with an **80% minimum code coverage** gate.
+
+The security refresh requires Node.js >=22.22.2 to satisfy the existing jsdom test dependency range and patched Undici. `.nvmrc` selects Node.js 22.22.2. Run `nvm use` before installing or running checks; older Node versions fail the engine guard. See [Dependency security review](docs/DEPENDENCY_SECURITY.md) for remaining advisories.

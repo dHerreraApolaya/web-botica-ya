@@ -1,4 +1,5 @@
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { renderWithCatalog as render, catalogFixtureRepository } from '@/test/catalog.fixture';
+import { act, cleanup, fireEvent, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { playFeedback } from '@/utils/feedback.util';
@@ -30,7 +31,7 @@ const renderFlow = (
     <MemoryRouter initialEntries={[path]}>
       <Header />
       <Routes>
-        <Route path="/" element={<LandingScreen />} />
+        <Route path="/" element={<LandingScreen repository={catalogFixtureRepository} />} />
         <Route path="/carrito" element={<CartScreen />} />
         <Route path="/checkout/:step?" element={<CheckoutScreen facade={facade} />} />
         <Route path="/confirmacion" element={<ConfirmationScreen />} />
@@ -99,6 +100,9 @@ describe('complete checkout prototype', () => {
     fireEvent.click(screen.getByRole('link', { name: /4\. Revisa tu compra/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
     await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' });
+    expect(
+      screen.getByText(/Los productos, precios y existencias mostrados son ficticios/)
+    ).toBeInTheDocument();
     expect(salesStore.getState().order?.prescription.document?.name).toBe('receta-corregida.pdf');
     expect(playFeedback).toHaveBeenCalledWith('order');
   });
@@ -164,7 +168,7 @@ describe('complete checkout prototype', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'BY-0001' } });
     fireEvent.submit(screen.getByRole('search'));
     fireEvent.click(
-      screen.getByRole('button', { name: `Agregar ${LOCAL_PRODUCTS[0].name} al carrito` })
+      await screen.findByRole('button', { name: `Agregar ${LOCAL_PRODUCTS[0].name} al carrito` })
     );
     expect(salesStore.getState().cart).toHaveLength(1);
     fireEvent.click(screen.getByRole('link', { name: 'Carrito de compras' }));
@@ -311,7 +315,7 @@ describe('complete checkout prototype', () => {
     ).toBeInTheDocument();
   });
 
-  it('limits repeated catalog additions and disables unavailable products', () => {
+  it('limits repeated catalog additions and disables unavailable products', async () => {
     renderFlow();
     const button = screen.getByRole('button', {
       name: `Agregar ${LOCAL_PRODUCTS[0].name} al carrito`,
@@ -322,7 +326,7 @@ describe('complete checkout prototype', () => {
     expect(button).toHaveTextContent('Límite de stock');
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'BY-0011' } });
     fireEvent.submit(screen.getByRole('search'));
-    for (const control of within(screen.getByRole('article')).getAllByRole('button'))
+    for (const control of within(await screen.findByRole('article')).getAllByRole('button'))
       expect(control).toBeDisabled();
   });
 });

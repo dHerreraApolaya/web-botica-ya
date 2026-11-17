@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: node --test scripts/check-sensitive-files.test.mjs
       - run: node scripts/check-sensitive-files.mjs
       - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e
@@ -43,5 +43,5 @@ jobs:
           run_install: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: pnpm audit --audit-level high

@@ -1,4 +1,5 @@
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { renderWithCatalog as render, catalogFixtureRepository } from '@/test/catalog.fixture';
+import { cleanup, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { LandingScreen } from '../../landing/screens/Landing.screen';
 
@@ -38,7 +39,7 @@ afterEach(() => {
 
 it('orders categories alphabetically in both the row and drawer', () => {
   enableDrawer();
-  render(<LandingScreen />);
+  render(<LandingScreen repository={catalogFixtureRepository} />);
   const names = [
     'Cuidado de la Piel',
     'Mamá & Bebé',
@@ -62,9 +63,9 @@ it('orders categories alphabetically in both the row and drawer', () => {
   ).toEqual(names);
 });
 
-it('selects multiple categories through the drawer and deselects them without losing the query', () => {
+it('selects multiple categories through the drawer and deselects them without losing the query', async () => {
   enableDrawer();
-  render(<LandingScreen />);
+  render(<LandingScreen repository={catalogFixtureRepository} />);
   fireEvent.click(screen.getByRole('button', { name: 'Ver categorías' }));
   const drawer = screen.getByRole('dialog', { name: 'Categorías' });
   fireEvent.click(within(drawer).getByRole('button', { name: 'Medicamentos' }));
@@ -75,28 +76,29 @@ it('selects multiple categories through the drawer and deselects them without lo
   );
   fireEvent.click(within(drawer).getByRole('button', { name: /Ver productos/ }));
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  const cards = within(screen.getByRole('region', { name: 'Resultados de búsqueda' })).getAllByRole(
-    'article'
-  );
+  const cards = within(
+    await screen.findByRole('region', { name: 'Resultados de búsqueda' })
+  ).getAllByRole('article');
   expect(cards.some((card) => card.textContent?.includes('Medicamentos'))).toBe(true);
   expect(cards.some((card) => card.textContent?.includes('Vitaminas & Suplementos'))).toBe(true);
-  vi.useFakeTimers();
   fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'parace' } });
-  act(() => vi.advanceTimersByTime(300));
+  fireEvent.submit(screen.getByRole('search'));
+  await screen.findByRole('region', { name: 'Resultados de búsqueda' });
   fireEvent.click(screen.getByRole('button', { name: 'Medicamentos' }));
-  expect(screen.getByText('No encontramos productos')).toBeVisible();
+  expect(await screen.findByText('No encontramos productos')).toBeVisible();
   expect(screen.getByRole('button', { name: 'Vitaminas & Suplementos' })).toHaveAttribute(
     'aria-pressed',
     'true'
   );
   expect(screen.getByRole('searchbox')).toHaveValue('parace');
   fireEvent.click(screen.getByRole('button', { name: 'Vitaminas & Suplementos' }));
+  await screen.findByRole('region', { name: 'Resultados de búsqueda' });
   expect(screen.queryByText('No encontramos productos')).not.toBeInTheDocument();
 });
 
 it('shows an empty drawer search without changing selected filters and restores focus on close', () => {
   enableDrawer();
-  render(<LandingScreen />);
+  render(<LandingScreen repository={catalogFixtureRepository} />);
   const trigger = screen.getByRole('button', { name: 'Ver categorías' });
   fireEvent.click(trigger);
   const drawer = screen.getByRole('dialog');

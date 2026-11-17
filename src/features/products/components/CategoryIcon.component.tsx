@@ -26,6 +26,12 @@ export const CategoryIcon: FC<{ category: ProductCategory }> = ({ category }) =>
     aria-hidden="true"
     focusable="false"
   >
-    <path d={CATEGORY_PATHS[category]} />
+    <path
+      d={
+        Object.hasOwn(CATEGORY_PATHS, category)
+          ? CATEGORY_PATHS[category]
+          : CATEGORY_PATHS.Medicamentos
+      }
+    />
   </svg>
 );

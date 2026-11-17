@@ -1,30 +1,21 @@
-import process from "node:process";
+import process from 'node:process';
+import { readFileSync } from 'node:fs';
 
-const requiredNodeVersion = 22;
-const currentVersion = process.versions.node;
-const majorVersion = parseInt(currentVersion.split(".")[0], 10);
-
-if (majorVersion < requiredNodeVersion) {
-  console.error("\n\x1b[41m%s\x1b[0m", " ❌ ERROR DE ENTORNO EN EL PROYECTO ");
+const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const required = /^>=(\d+)\.(\d+)\.(\d+)$/.exec(manifest.engines.node);
+if (!required) throw new Error('Invalid minimum Node.js version in package.json.');
+const minimum = required.slice(1).map(Number);
+const current = process.versions.node.split('.').map(Number);
+let supported = true;
+for (let index = 0; index < minimum.length; index += 1) {
+  if (current[index] !== minimum[index]) {
+    supported = current[index] > minimum[index];
+    break;
+  }
+}
+if (!supported) {
   console.error(
-    "\x1b[31m%s\x1b[0m",
-    `Tu versión de Node.js es ${currentVersion}.`,
+    `Este proyecto requiere Node.js ${manifest.engines.node}. Ejecuta nvm use para cargar la versión de .nvmrc.`
   );
-  console.error(
-    "\x1b[33m%s\x1b[0m",
-    `Este proyecto requiere Node.js >= v${requiredNodeVersion}.0.0 para funcionar.`,
-  );
-  console.error(
-    "\x1b[36m%s\x1b[0m",
-    "\nPor favor regulariza tu entorno ejecutando:",
-  );
-  console.error(
-    '   nvm use   (o "nvm install 22" si no la tienes instalada)\n',
-  );
-  console.error(
-    "\x1b[35m%s\x1b[0m",
-    "NO modifiques archivos de configuración del proyecto ni cambies dependencias.\n",
-  );
-
   process.exit(1);
 }

@@ -37,7 +37,7 @@ Strict index for any AI Agent operating in this repository.
 
 ## Environment & Engine Enforcement
 
-- Strictly required: Node.js >= 22.12.0 and pnpm >= 9.0.0.
+- Strictly required: use the Node.js version pinned in `.nvmrc`, satisfying `package.json` engines, and pnpm >= 9.0.0.
 - If `pnpm install` fails due to an engine mismatch, DO NOT modify `package.json` or source code.
 - Warn the user to update their local Node environment using `.nvmrc`.
 

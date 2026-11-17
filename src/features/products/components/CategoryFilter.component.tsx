@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState, type FC } from 'react';
-import { PRODUCT_CATEGORIES, type ProductCategory } from '../domain/Product';
+import type { CatalogCategory } from '../domain/Catalog';
 import { normalizeSearch } from '../utils/productSearch.util';
 import { CategoryIcon } from './CategoryIcon.component';
 
 interface Props {
-  selected: readonly ProductCategory[];
-  onToggle: (category: ProductCategory) => void;
+  categories: readonly CatalogCategory[];
+  selected: readonly string[];
+  onToggle: (category: string) => void;
   onClose?: () => void;
 }
-const SORTED_CATEGORIES = [...PRODUCT_CATEGORIES].sort((left, right) =>
-  left.localeCompare(right, 'es')
-);
-
 const BUTTON_STYLE =
   'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-semibold text-text-main transition-colors duration-fast hover:border-primary hover:bg-primary-surface aria-pressed:border-primary aria-pressed:bg-primary-surface aria-pressed:text-primary-surface-text';
 
-export const CategoryFilter: FC<Props> = ({ selected, onToggle, onClose }) => {
+export const CategoryFilter: FC<Props> = ({ categories, selected, onToggle, onClose }) => {
+  const sortedCategories = [...categories].sort((left, right) =>
+    left.name.localeCompare(right.name, 'es')
+  );
   const row = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -29,34 +29,35 @@ export const CategoryFilter: FC<Props> = ({ selected, onToggle, onClose }) => {
     observer.observe(element);
     measure();
     return () => observer.disconnect();
-  }, []);
+  }, [categories]);
   const close = (): void => dialog.current?.close();
-  const renderCategory = (category: ProductCategory) => (
+  const renderCategory = (category: CatalogCategory) => (
     <button
-      key={category}
+      key={category.id}
       type="button"
-      aria-pressed={selected.includes(category)}
-      onClick={() => onToggle(category)}
+      aria-pressed={selected.includes(category.id)}
+      disabled={selected.length >= 6 && !selected.includes(category.id)}
+      onClick={() => onToggle(category.id)}
       className={BUTTON_STYLE}
     >
-      <CategoryIcon category={category} />
-      <span>{category}</span>
+      <CategoryIcon category={category.name} />
+      <span>{category.name}</span>
     </button>
   );
-  const matches = SORTED_CATEGORIES.filter((category) =>
-    normalizeSearch(category).includes(normalizeSearch(filter))
+  const matches = sortedCategories.filter((category) =>
+    normalizeSearch(category.name).includes(normalizeSearch(filter))
   );
   return (
     <div className="mt-4 text-left">
       <p className="mb-2 text-xs font-semibold text-text-muted">
-        Explora por categoría · puedes elegir varias
+        Explora por categoría · puedes elegir hasta seis
       </p>
       <div className="flex min-w-0 items-start gap-2">
         <div
           ref={row}
           className="flex min-w-0 flex-1 gap-2 overflow-x-auto sm:flex-wrap sm:overflow-visible"
         >
-          {SORTED_CATEGORIES.map(renderCategory)}
+          {sortedCategories.map(renderCategory)}
         </div>
         {overflow ? (
           <button

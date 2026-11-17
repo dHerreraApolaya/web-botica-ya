@@ -34,3 +34,7 @@ Code generated must comply with static analysis scanners (Fortify, SonarQube, JF
   - `src/features/feature-name/utils/`: 100% pure function coverage.
   - `src/features/feature-name/hooks/`: 90% logic coverage.
   - `src/components/ui/atoms/`: 100% component render & accessibility coverage.
+
+## Collaborative and AI-assisted changes
+
+Use scoped PRs and independent human review. Generated code is untrusted until inspected and tested. Never include credentials or patient data in prompts or logs. Gitleaks is required locally for commits; CI scans history and audits dependencies. Install the official CLI before committing. Secret scan and Dependency audit should become required checks only after a successful run. Repository secret scanning and push protection require separate GitHub configuration. `.gitignore` and hooks alone do not enforce server-side protection. Sensitive file checks are defense in depth, not complete secret detection. Rotate previously exposed real credentials.

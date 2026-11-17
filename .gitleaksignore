@@ -1,0 +1,2 @@
+# Reviewed false positive: original source commit SHA in provenance documentation, not a credential.
+09220803290c9e35b98a4ff69336f403466d447f:docs/BACKEND_SEPARATION.md:generic-api-key:7

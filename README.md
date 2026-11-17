@@ -139,24 +139,41 @@ web-botica-ya/
 # 1. Install dependencies using pnpm
 pnpm install
 
-# 2. Configure environment variables (copy example template when available)
-cp .env.example .env
-
-# 3. Start local development server
+# 2. Start local development with the API running locally on port 8081
 pnpm dev
+
+# Alternatively, use the public demo API without starting the backend
+pnpm dev:api-public
 ```
 
 ### Available Scripts
 
-| Command             | Action                                                         |
-| :------------------ | :------------------------------------------------------------- |
-| `pnpm dev`          | Starts local Vite development server with HMR                  |
-| `pnpm build`        | Compiles TypeScript declarations and creates production bundle |
-| `pnpm preview`      | Serves local production build preview                          |
-| `pnpm typecheck`    | Executes TypeScript type checking (`tsc --noEmit`)             |
-| `pnpm lint`         | Runs ESLint analysis across codebase (`--max-warnings 0`)      |
-| `pnpm format`       | Auto-formats source code using Prettier                        |
-| `pnpm format:check` | Verifies formatting compliance in CI                           |
+| Command               | Action                                                         |
+| :-------------------- | :------------------------------------------------------------- |
+| `pnpm dev`            | Local web with HMR; proxies `/api` to `http://127.0.0.1:8081`  |
+| `pnpm dev:api-local`  | Explicit local web + local API mode                            |
+| `pnpm dev:api-public` | Local web + public demo API on Vercel                          |
+| `pnpm build`          | Compiles TypeScript declarations and creates production bundle |
+| `pnpm preview`        | Serves local production build preview                          |
+| `pnpm typecheck`      | Executes TypeScript type checking (`tsc --noEmit`)             |
+| `pnpm lint`           | Runs ESLint analysis across codebase (`--max-warnings 0`)      |
+| `pnpm format`         | Auto-formats source code using Prettier                        |
+| `pnpm format:check`   | Verifies formatting compliance in CI                           |
+
+### Choosing the development API
+
+`pnpm dev` and `pnpm dev:api-local` require the catalog backend to run separately on
+`http://127.0.0.1:8081`. `pnpm dev:api-public` uses
+`https://boticaya-catalog-service.vercel.app`; no local backend or database credentials are needed.
+Both serve the frontend at the local URL printed by Vite, normally `http://localhost:5173`.
+Stop the running Vite process before switching commands.
+
+Leave `VITE_API_BASE_URL` unset to use these modes: the browser calls `/api` on the local
+Vite server, which forwards requests to the chosen API. An explicitly configured
+`VITE_API_BASE_URL` overrides this browser base and bypasses the proxy. The public mode retains
+HTTPS certificate verification and does not require broader backend CORS permissions.
+The public catalog uses fictional demo data and exposes read-only endpoints; authentication
+and checkout remain prototypes. Production routing remains configured in `vercel.json`.
 
 ---
 

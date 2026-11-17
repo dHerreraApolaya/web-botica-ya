@@ -11,6 +11,8 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm && node ./scripts/check-engine.js",
     "dev": "vite",
+    "dev:api-local": "vite --mode api-local",
+    "dev:api-public": "vite --mode api-public",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

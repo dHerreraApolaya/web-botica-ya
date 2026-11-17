@@ -49,6 +49,14 @@ Strict index for any AI Agent operating in this repository.
 - **Coverage Requirement**: Ensure new code includes unit tests meeting the **80% minimum coverage** rule.
 - **Scanner Preparedness**: Write code compatible with Fortify, SonarQube, and Xray scanners.
 
+## Observability Rules (Mandatory)
+
+- For feature development/review, apply [the canonical observability policy](../docs/OBSERVABILITY.md), including semantic constants, trace boundaries, privacy and verification. Report implemented signals, justified omissions and pending integrations.
+
+## Documentation Efficiency
+
+- Keep each rule in one canonical document. Other files should link to its relevant section, not repeat it. Update existing guidance before creating files; remove superseded instructions and keep history in Git. Read only documents relevant to the task.
+
 ## Commit Message Policy (Conventional Commits)
 
 - All commit messages MUST follow the Conventional Commits specification.

@@ -1,5 +1,11 @@
 # 🚀 Web Botica Ya - Frontend Master Index
 
+The Node.js + Express backend and PostgreSQL setup are documented in
+[`api-botica-ya/README.md`](./api-botica-ya/README.md). It preserves the initial
+catalog contract. The developer verified `BY-0001` with five units from the existing
+`boticaya_dev` through Express; Java has been removed. Order reception is prepared
+but disabled by default while its schema and access are configured.
+
 Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
 
 ---

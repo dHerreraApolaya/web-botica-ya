@@ -34,18 +34,22 @@ export const RumPilot = () => {
         onClick={() => {
           setAttempted(true);
           setStatus('Cargando la prueba…');
+          let blockedReason = '';
           void startRumPilot(
             {
               enabled: envConfig.VITE_BETTERSTACK_RUM_PILOT_ENABLED,
               privacyReviewed: envConfig.VITE_BETTERSTACK_RUM_PRIVACY_REVIEWED,
               applicationToken: envConfig.VITE_BETTERSTACK_RUM_APPLICATION_TOKEN,
             },
-            consent
+            consent,
+            (reason) => {
+              blockedReason = reason;
+            }
           ).then((started) =>
             setStatus(
               started
                 ? 'Tag cargado. Comprueba la recepción y los datos enviados en Better Stack y en la pestaña Red del navegador.'
-                : 'No se activó: configuración, privacidad o conexión no disponibles.'
+                : `No se activó: ${blockedReason || 'No se pudo completar la carga.'}`
             )
           );
         }}

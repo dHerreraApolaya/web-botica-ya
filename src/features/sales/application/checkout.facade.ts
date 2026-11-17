@@ -1,3 +1,5 @@
+import { NOOP_LOGGER, type TechnicalLogger } from '@/shared/observability/observability.service';
+import { SALES_LOGS } from '../constants/salesLogs.constants';
 import type { StoreApi } from 'zustand/vanilla';
 import type { SalesState } from '../state/sales.store';
 import type {
@@ -16,7 +18,8 @@ import {
 
 export const createCheckoutFacade = (
   store: StoreApi<SalesState>,
-  adapters: { payment: PaymentAdapter; prescription: PrescriptionAdapter }
+  adapters: { payment: PaymentAdapter; prescription: PrescriptionAdapter },
+  logger: TechnicalLogger = NOOP_LOGGER
 ) => {
   let reviewVersion = 0;
   return {
@@ -42,6 +45,7 @@ export const createCheckoutFacade = (
         )
           store.setState({ prescription: { status, signature, document: { ...document } } });
       } catch {
+        logger.log(SALES_LOGS.ADAPTER_FAILED);
         if (
           version === reviewVersion &&
           prescriptionSignature(store.getState().cart) === signature &&
@@ -94,6 +98,7 @@ export const createCheckoutFacade = (
         });
         return order;
       } catch {
+        logger.log(SALES_LOGS.ADAPTER_FAILED);
         store.setState({ paymentStatus: 'error' });
         return null;
       }

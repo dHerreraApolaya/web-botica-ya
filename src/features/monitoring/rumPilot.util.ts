@@ -14,62 +14,52 @@ interface PrivacySignals {
   globalPrivacyControl?: boolean;
   referrer: string;
 }
-type Tag = ((...args: unknown[]) => void) & { q?: unknown[][]; l?: number };
-type PilotWindow = Window & { betterstack?: Tag };
+export const getRumPilotBlocker = (
+  config: PilotConfig,
+  location: PilotLocation,
+  signals: PrivacySignals
+): string | undefined => {
+  if (!config.enabled)
+    return 'El piloto está desactivado. Revisa .env.local y reinicia el servidor.';
+  if (!config.privacyReviewed) return 'Falta confirmar la revisión de privacidad en .env.local.';
+  if (!config.applicationToken?.match(/^[a-zA-Z0-9_-]{1,200}$/))
+    return 'Falta un Application Token válido en .env.local.';
+  if (location.origin !== 'http://127.0.0.1:4174' || location.pathname !== '/rum-pilot/')
+    return 'Abre exactamente http://127.0.0.1:4174/rum-pilot/.';
+  if (location.search || location.hash)
+    return 'Abre el piloto sin parámetros ni fragmentos en la dirección.';
+  if (signals.doNotTrack === '1' || signals.doNotTrack === 'yes' || signals.globalPrivacyControl)
+    return 'El navegador solicita no rastrear (DNT o GPC). Se respeta esa preferencia y no se activa la prueba.';
+  if (signals.referrer)
+    return 'La visita tiene una página de origen. Abre una pestaña nueva y escribe directamente la dirección del piloto.';
+  return undefined;
+};
 
 export const canStartRumPilot = (
   config: PilotConfig,
   location: PilotLocation,
   signals: PrivacySignals
-): boolean =>
-  config.enabled &&
-  config.privacyReviewed &&
-  Boolean(config.applicationToken?.match(/^[a-zA-Z0-9_-]{1,200}$/)) &&
-  location.origin === 'http://127.0.0.1:4174' &&
-  location.pathname === '/rum-pilot/' &&
-  !location.search &&
-  !location.hash &&
-  signals.doNotTrack !== '1' &&
-  signals.doNotTrack !== 'yes' &&
-  !signals.globalPrivacyControl &&
-  !signals.referrer;
+): boolean => !getRumPilotBlocker(config, location, signals);
 
-export const startRumPilot = (config: PilotConfig, consent: boolean): Promise<boolean> => {
+export const startRumPilot = (
+  config: PilotConfig,
+  consent: boolean,
+  onBlocked?: (reason: string) => void
+): Promise<boolean> => {
   const signals = navigator as Navigator & { globalPrivacyControl?: boolean };
-  if (
-    !consent ||
-    !canStartRumPilot(config, window.location, {
-      doNotTrack: navigator.doNotTrack,
-      globalPrivacyControl: signals.globalPrivacyControl,
-      referrer: document.referrer,
-    })
-  )
+  const blocker = !consent
+    ? 'Debes aceptar la prueba técnica antes de activarla.'
+    : getRumPilotBlocker(config, window.location, {
+        doNotTrack: navigator.doNotTrack,
+        globalPrivacyControl: signals.globalPrivacyControl,
+        referrer: document.referrer,
+      });
+  if (blocker) {
+    onBlocked?.(blocker);
     return Promise.resolve(false);
-  const target = window as PilotWindow;
-  if (document.getElementById('betterstack-rum-pilot') || target.betterstack)
-    return Promise.resolve(false);
-  const tag: Tag = (...args) => {
-    (tag.q ??= []).push(args);
-  };
-  tag.l = Date.now();
-  target.betterstack = tag;
-  tag('config', { crossDomainCookie: false });
-  tag('init', { environment: 'isolated-evaluation', autoPageview: false, debug: false });
-  const script = document.createElement('script');
-  script.id = 'betterstack-rum-pilot';
-  script.async = true;
-  script.crossOrigin = 'anonymous';
-  script.referrerPolicy = 'no-referrer';
-  const url = new URL('https://betterstack.net/b.js');
-  url.searchParams.set('t', config.applicationToken!);
-  script.src = url.href;
-  return new Promise((resolve) => {
-    script.onload = () => resolve(true);
-    script.onerror = () => {
-      script.remove();
-      delete target.betterstack;
-      resolve(false);
-    };
-    document.head.appendChild(script);
-  });
+  }
+  onBlocked?.(
+    'El tag directo está bloqueado: la prueba detectó IP, ubicación e identificadores de sesión. El envío requiere un backend que anonimice la telemetría antes de contactar con Better Stack.'
+  );
+  return Promise.resolve(false);
 };

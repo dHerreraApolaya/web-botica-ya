@@ -1,0 +1,36 @@
+{
+  "name": "api-botica-ya",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
+    "dev": "pnpm build && node --env-file-if-exists=.env --watch dist/server.js",
+    "start": "node --env-file-if-exists=.env dist/server.js",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage --config vitest.coverage.config.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "verify:catalog": "node --env-file-if-exists=.env scripts/verify-catalog.mjs",
+    "verify:orders": "node --env-file-if-exists=.env scripts/verify-local-orders.mjs",
+    "migrate": "pnpm build && node --env-file-if-exists=.env dist/database/migrate.js"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "pg": "8.23.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "^24.19.0",
+    "@types/pg": "8.23.1",
+    "@vitest/coverage-v8": "5.0.2",
+    "typescript": "~6.0.2",
+    "vitest": "5.0.2"
+  }
+}

@@ -1,5 +1,9 @@
 # Catalog API integration
 
+## Approved development demo update
+
+On 2026-11-17 the owner authorized loading the project's 500 fictional products, synthetic PEN prices and fictional stock into Supabase development to demonstrate the actual HTTP integration. This supersedes the earlier real-commercial-values-only restriction for this demonstration. No DIGEMID records or external images are reused. The catalog displays a pre-purchase demo notice; checkout confirmation explicitly states the products, prices and quantities are fictional and no charge/delivery occurs. The server remains read-only for the browser and order reception remains disabled. The notices add no monitoring events or new data collection.
+
 ## Scope and approved decisions
 
 The browser reads the Express catalog connected to Supabase. Official Peruvian datasets require verified reuse permission before import. No data has been approved for import yet. Only products with real owner-supplied price and stock can be published. Imported drafts must remain hidden. Keep the existing local SVG as the product image; never fetch third-party images or fall back to fictional products on server errors.

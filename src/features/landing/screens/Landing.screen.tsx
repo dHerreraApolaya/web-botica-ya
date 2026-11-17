@@ -110,6 +110,10 @@ export const LandingScreen: FC<LandingScreenProps> = ({ repository = catalogRepo
         onCategorySelect={selectCategory}
       />
       <div id="catalog-results" className="mx-auto max-w-6xl px-6 pb-16 max-md:px-4">
+        <p className="mb-6 rounded-md border border-border bg-primary-surface p-4 text-sm text-primary-surface-text">
+          Catálogo de demostración. Productos, precios, stock y requisitos de receta ficticios. No
+          se realizan cobros ni entregas reales.
+        </p>
         {categories.isPending ? (
           <p role="status" className="mb-4 text-text-muted">
             Cargando categorías…

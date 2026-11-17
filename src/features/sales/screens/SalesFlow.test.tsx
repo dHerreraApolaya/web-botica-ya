@@ -100,6 +100,9 @@ describe('complete checkout prototype', () => {
     fireEvent.click(screen.getByRole('link', { name: /4\. Revisa tu compra/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra de prueba' }));
     await screen.findByRole('heading', { name: '¡Compra de prueba confirmada!' });
+    expect(
+      screen.getByText(/Los productos, precios y existencias mostrados son ficticios/)
+    ).toBeInTheDocument();
     expect(salesStore.getState().order?.prescription.document?.name).toBe('receta-corregida.pdf');
     expect(playFeedback).toHaveBeenCalledWith('order');
   });

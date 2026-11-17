@@ -14,7 +14,7 @@ const ConfirmationScreen: FC = () => {
         <p className="mt-3 font-bold">Pedido {order.id}</p>
         <p className="mt-2 text-sm">
           Este pedido es una demostración. No se ha realizado ningún cobro ni se preparará una
-          entrega.
+          entrega. Los productos, precios y existencias mostrados son ficticios.
         </p>
       </div>
       <div className="rounded-xl border border-border bg-surface p-6">

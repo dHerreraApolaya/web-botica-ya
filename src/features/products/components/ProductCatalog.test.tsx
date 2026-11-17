@@ -37,6 +37,13 @@ const renderLanding = (repository: CatalogRepository = catalogFixtureRepository)
   renderWithCatalog(<LandingScreen repository={repository} />);
 
 describe('API product catalog', () => {
+  it('identifies fictional prices and stock before a purchase starts', async () => {
+    renderLanding();
+    expect(
+      screen.getByText(/Catálogo de demostración\. Productos, precios, stock/)
+    ).toBeInTheDocument();
+    await screen.findAllByRole('article');
+  });
   it('uses the production HTTP composition without substituting the local catalog', async () => {
     const product = {
       ...LOCAL_PRODUCTS[0],

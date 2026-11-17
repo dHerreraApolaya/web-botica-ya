@@ -126,6 +126,27 @@ describe('API product catalog', () => {
     act(() => vi.advanceTimersByTime(300));
     expect(find).toHaveBeenCalledTimes(2);
   });
+  it.each([
+    { pause: 200, expected: ['alchol'] },
+    { pause: 350, expected: ['alc', 'alcho', 'alchol'] },
+  ])(
+    'debounces the observed search sequence with $pause ms pauses',
+    async ({ pause, expected }) => {
+      vi.useFakeTimers();
+      const find = vi.spyOn(catalogFixtureRepository, 'find');
+      renderLanding();
+      for (const query of ['alc', 'alcho', 'alchol']) {
+        fireEvent.change(screen.getByRole('searchbox'), { target: { value: query } });
+        await act(async () => {
+          vi.advanceTimersByTime(pause);
+        });
+      }
+      await act(async () => {
+        vi.advanceTimersByTime(300);
+      });
+      expect(find.mock.calls.map(([request]) => request.query)).toEqual(expected);
+    }
+  );
   it('retains filters, sends normalized search and restores featured products on clear', async () => {
     renderLanding();
     fireEvent.click(screen.getByRole('button', { name: 'Medicamentos' }));

@@ -6,7 +6,7 @@ On 2026-11-17 the owner authorized loading the project's 500 fictional products,
 
 ## Scope and approved decisions
 
-The browser reads the Express catalog connected to Supabase. Official Peruvian datasets require verified reuse permission before import. No data has been approved for import yet. Only products with real owner-supplied price and stock can be published. Imported drafts must remain hidden. Keep the existing local SVG as the product image; never fetch third-party images or fall back to fictional products on server errors.
+The browser reads the Express catalog connected to Supabase. The approved fictional development dataset is loaded on the server. Official Peruvian datasets still require verified reuse permission before import and owner-approved commercial values before publication. Imported official-data drafts must remain hidden. Keep the existing local SVG as the product image; never fetch third-party images or fall back to local fictional products on server errors.
 
 The user approved multiple categories, typo-tolerant search, numbered pages and exact totals. The API owns filtering, typo matching, counting and paging across the complete published catalog. The UI never filters one downloaded page to simulate a complete result set. Checkout and user access remain their existing prototypes; catalog integration does not make payment, prescription review or registration production services.
 
@@ -16,6 +16,7 @@ The user approved multiple categories, typo-tolerant search, numbered pages and 
 - `GET /api/products/catalog` accepts optional `q` (3–128 characters, up to 12 words), `categoryIds` (CSV UUIDs, max six), `featured`, `inStock`, and `page` (1–1000), `pageSize` (1–50). It returns `{items,page,totalPages,total}`. Search page size is 12; featured requests use eight items, `featured=true` and `inStock=true`.
 - Products include stable IDs, SKU, category/brand labels and IDs, presentation, price in integer cents, currency PEN, availability, prescription and featured flags, plus nullable image metadata. The frontend validates response types, bounds, currency and page consistency before rendering. Image metadata does not trigger downloads.
 - Empty submitted search browses the complete public catalog. Clearing returns to featured products. Typing waits 300 ms; immediate submit cancels the debounce. Changing filters resets page to one and cancels the obsolete request.
+- Debounce is trailing: rapid changes less than 300 ms apart issue only the final query. A pause exceeding 300 ms can issue an intermediate query, so `alc`, `alcho`, `alchol` may legitimately produce three distinct requests. Enter and category changes deliberately commit immediately. Regression tests cover both 200 ms and 350 ms pauses; the screenshot alone does not establish actual timing. Stale requests are aborted and their late responses are not displayed.
 - Keep exact server totals and totalPages. A bounded five-button page window avoids creating a button for every page. When the technical page-1000 bound is reached and more results exist, ask the user to refine the search instead of truncating the reported total.
 - Loading, unavailable and empty are different states. Failures show a generic Spanish message and explicit retry, without local data substitution. Category failures do not substitute the six fictional categories.
 

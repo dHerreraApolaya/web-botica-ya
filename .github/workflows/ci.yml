@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     name: Typecheck, Lint & Format Check
@@ -13,15 +16,15 @@ jobs:
 
     steps:
       - name: 1. Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
 
       - name: 2. Setup Node.js Environment
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: 3. Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
         with:
           version: 9.15.4
 
@@ -32,7 +35,7 @@ jobs:
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
 
       - name: 5. Cache pnpm dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -59,40 +62,3 @@ jobs:
 
       - name: 12. Verify Production Build
         run: pnpm build
-
-  express-api:
-    name: Express API and PostgreSQL
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: boticaya_test
-          POSTGRES_DB: boticaya_api_test
-          POSTGRES_HOST_AUTH_METHOD: trust
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U boticaya_test -d boticaya_api_test"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-    env:
-      BOTICAYA_TEST_DATABASE_URL: postgresql://boticaya_test@127.0.0.1:5432/boticaya_api_test
-    defaults:
-      run:
-        working-directory: api-botica-ya
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: api-botica-ya/pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm test:coverage
-      - run: pnpm build

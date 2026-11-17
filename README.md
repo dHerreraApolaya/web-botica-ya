@@ -1,12 +1,14 @@
 # 🚀 Web Botica Ya - Frontend Master Index
 
-The Node.js + Express backend and PostgreSQL setup are documented in
-[`api-botica-ya/README.md`](./api-botica-ya/README.md). It preserves the initial
-catalog contract. The developer verified `BY-0001` with five units from the existing
-`boticaya_dev` through Express; Java has been removed. Order reception is prepared
-but disabled by default while its schema and access are configured.
+The Express microservice, PostgreSQL migrations and database tests live in the separate
+[boticaya-catalog-service repository](https://github.com/dHerreraApolaya/boticaya-catalog-service).
+Frontend CI validates this application and scans secrets/dependencies; backend CI runs in that repository.
+The historical `api-botica-ya/` directory is not the maintained service and is not executed by frontend CI.
 
-The product listing now uses the separate Express catalog API through same-origin `/api`. For local proxy setup, endpoint contracts, approved scope and validation requirements, see [Catalog API integration](.specs/features/catalog-api-integration/catalog-api-integration.spec.md). Official product import is pending verified reuse permission and real commercial values; an empty API response stays empty.
+The listing reads the real API through same-origin `/api`. The owner-approved 500-product fictional
+dataset is loaded in Supabase development, with explicit demo notices and no real payments/deliveries.
+Official-source reuse and real commercial publication remain separate pending work. See
+[Catalog API integration](.specs/features/catalog-api-integration/catalog-api-integration.spec.md).
 
 Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
 

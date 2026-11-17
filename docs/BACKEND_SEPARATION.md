@@ -1,11 +1,9 @@
-# Backend repository separation
+# Backend separation
 
-Catalog backend: https://github.com/dHerreraApolaya/boticaya-catalog-service
+The current backend is Express 5 + TypeScript on Node.js 22 with PostgreSQL, not Java. Repository: https://github.com/dHerreraApolaya/boticaya-catalog-service
 
-The Java API, Maven configuration, SQL development seed, and backend tests now belong to that repository. This frontend continues to use its existing local product repository; no HTTP integration is introduced by this change.
+It owns products, inventory, optional local order reception, SQL, API tests and backend CI. Frontend source, mocks and HTTP integration remain unchanged. No Supabase changes are applied.
 
-Original API source commit: `6a8c2558eda8ecd3528e4d23a44fd2bf69ad206c`. The backend extraction retains original authorship and source attribution, replacing fixed datasource credentials before constructing its independent history. Existing frontend Git history is unchanged. Rotate any original credentials that were real or reused.
+Regularization source: web-botica-ya `faaa5e6`. PR #17 removed Java only after Express had been added concurrently; this follow-up removes the remaining Express files and moves its CI to the service. The missing catalog fixture is restored in the service from `6a8c255`. Backend PR #1 must merge before this removal.
 
-Review and merge the backend import before merging the frontend removal. Backend database environment variables stay on the server; only the public API base URL belongs in `VITE_API_BASE_URL` when HTTP integration is implemented. Supabase schema and data are unchanged by this separation.
-
-Validation: standalone backend packaging succeeded with tests skipped; integration tests require an isolated PostgreSQL environment. Frontend typecheck, lint, formatting, 159 application tests, 12 hook tests, coverage, and production build passed. No frontend source code or dependencies changed.
+The import branch no longer uses Java. Its earlier sanitized Java commits remain in history for traceability. No original credential-bearing blobs were imported. Rotate any real credentials previously committed to the original frontend history.

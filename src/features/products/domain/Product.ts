@@ -7,7 +7,7 @@ export const PRODUCT_CATEGORIES = [
   'Salud Digestiva',
 ] as const;
 
-export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+export type ProductCategory = string;
 
 export interface Product {
   readonly id: string;

@@ -1,19 +1,25 @@
-import { useEffect, useMemo, useRef, useState, type FC } from 'react';
+import { useEffect, useRef, useState, type FC } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { CatalogNavigation } from '../components/CatalogNavigation.component';
 import { scrollToCatalogSection } from '@/utils/catalogScroll.util';
 import { HeroSection } from '../components/HeroSection.component';
-import type { ProductCategory, ProductSearch } from '../../products/domain/Product';
-import { localProductRepository } from '../../products/data/localProduct.repository';
-import { paginateProducts } from '../../products/utils/productSearch.util';
+import { catalogRepository, FEATURED_REQUEST } from '../../products/application/catalog.config';
+import type { CatalogRepository, CatalogRequest } from '../../products/domain/Catalog';
 import { FeaturedProducts } from '../../products/components/FeaturedProducts.component';
 import { ProductResults } from '../../products/components/ProductResults.component';
 
-const FEATURED_PRODUCTS = localProductRepository.getFeatured();
+interface ActiveSearch {
+  query: string;
+  categoryIds: readonly string[];
+}
+interface LandingScreenProps {
+  repository?: CatalogRepository;
+}
 
-export const LandingScreen: FC = () => {
-  const [query, setQuery] = useState<string>('');
-  const [search, setSearch] = useState<ProductSearch | null>(null);
-  const [page, setPage] = useState<number>(1);
+export const LandingScreen: FC<LandingScreenProps> = ({ repository = catalogRepository }) => {
+  const [query, setQuery] = useState('');
+  const [search, setSearch] = useState<ActiveSearch | null>(null);
+  const [page, setPage] = useState(1);
   const pendingSearch = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cancelPendingSearch = (): void => {
     if (pendingSearch.current !== null) {
@@ -22,48 +28,67 @@ export const LandingScreen: FC = () => {
     }
   };
   useEffect(() => cancelPendingSearch, []);
-  const products = useMemo(() => (search ? localProductRepository.search(search) : []), [search]);
+  const trimmedQuery = search?.query.trim() ?? '';
+  const validQuery =
+    !trimmedQuery ||
+    (trimmedQuery.length >= 3 &&
+      trimmedQuery.length <= 128 &&
+      trimmedQuery.split(/\s+/).length <= 12);
+  const request: CatalogRequest = search
+    ? {
+        ...(trimmedQuery ? { query: trimmedQuery } : {}),
+        categoryIds: search.categoryIds,
+        page,
+        pageSize: 12,
+      }
+    : FEATURED_REQUEST;
+  const catalog = useQuery({
+    queryKey: ['catalog', request],
+    queryFn: ({ signal }) => repository.find(request, signal),
+    enabled: validQuery,
+    retry: false,
+  });
+  const categories = useQuery({
+    queryKey: ['catalog-categories'],
+    queryFn: ({ signal }) => repository.categories(signal),
+    retry: false,
+  });
 
   useEffect(() => {
     if (search && !document.querySelector('dialog[open]'))
       scrollToCatalogSection('catalog-filters');
   }, [search, page]);
-
+  const activateSearch = (value: string): void => {
+    const categoryIds = search?.categoryIds ?? [];
+    setSearch(value.trim() || categoryIds.length ? { query: value, categoryIds } : null);
+    setPage(1);
+  };
   const updateQuery = (value: string): void => {
     setQuery(value);
     cancelPendingSearch();
-    const nextSearch =
-      value.trim() || search?.categories?.length
-        ? { query: value, categories: search?.categories }
-        : null;
     if (!value.trim()) {
-      setSearch(nextSearch);
-      setPage(1);
+      activateSearch(value);
       return;
     }
     pendingSearch.current = setTimeout(() => {
       pendingSearch.current = null;
-      setSearch(nextSearch);
-      setPage(1);
+      activateSearch(value);
     }, 300);
   };
-
   const submitSearch = (): void => {
     cancelPendingSearch();
-    setSearch({ query, categories: search?.categories });
+    setSearch({ query, categoryIds: search?.categoryIds ?? [] });
     setPage(1);
   };
-
-  const selectCategory = (category: ProductCategory): void => {
+  const selectCategory = (id: string): void => {
     cancelPendingSearch();
-    const current = search?.categories ?? [];
-    const categories = current.includes(category)
-      ? current.filter((item) => item !== category)
-      : [...current, category];
-    setSearch(query.trim() || categories.length ? { query, categories } : null);
+    const current = search?.categoryIds ?? [];
+    const categoryIds = current.includes(id)
+      ? current.filter((item) => item !== id)
+      : [...current, id];
+    setSearch(query.trim() || categoryIds.length ? { query, categoryIds } : null);
     setPage(1);
   };
-
   const clearSearch = (): void => {
     cancelPendingSearch();
     setQuery('');
@@ -74,8 +99,9 @@ export const LandingScreen: FC = () => {
   return (
     <div className="w-full">
       <HeroSection
+        categories={categories.data ?? []}
         query={query}
-        activeCategories={search?.categories ?? []}
+        activeCategories={search?.categoryIds ?? []}
         onQueryChange={updateQuery}
         onSearch={submitSearch}
         onCategoriesClose={() => {
@@ -84,19 +110,63 @@ export const LandingScreen: FC = () => {
         onCategorySelect={selectCategory}
       />
       <div id="catalog-results" className="mx-auto max-w-6xl px-6 pb-16 max-md:px-4">
-        {/* <p className="mb-6 rounded-md border border-border bg-surface p-4 text-sm text-text-muted">
-          Catálogo de demostración: 500 productos ficticios y precios referenciales. No disponibles
-          para compra.
-        </p> */}
-        {search ? (
+        {categories.isPending ? (
+          <p role="status" className="mb-4 text-text-muted">
+            Cargando categorías…
+          </p>
+        ) : null}
+        {categories.isError ? (
+          <div role="alert" className="mb-4 rounded-md border border-border p-4">
+            <p>No pudimos cargar las categorías.</p>
+            <button
+              type="button"
+              onClick={() => void categories.refetch()}
+              className="mt-2 min-h-11 font-semibold text-primary-surface-text"
+            >
+              Reintentar categorías
+            </button>
+          </div>
+        ) : null}
+        {!validQuery ? (
+          <div role="status" className="rounded-md border border-border p-4">
+            <p>Escribe entre 3 y 128 caracteres y hasta 12 palabras para buscar.</p>
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="mt-2 min-h-11 font-semibold text-primary-surface-text"
+            >
+              Limpiar búsqueda
+            </button>
+          </div>
+        ) : catalog.isPending ? (
+          <p role="status" className="p-8 text-center text-text-muted">
+            Cargando productos…
+          </p>
+        ) : catalog.isError ? (
+          <div role="alert" className="rounded-md border border-border bg-surface p-6">
+            <p>No pudimos cargar los productos. Inténtalo de nuevo.</p>
+            <button
+              type="button"
+              onClick={() => void catalog.refetch()}
+              className="mt-3 min-h-11 font-semibold text-primary-surface-text"
+            >
+              Reintentar productos
+            </button>
+            {search ? (
+              <button type="button" onClick={clearSearch} className="ml-4 min-h-11 font-semibold">
+                Limpiar búsqueda
+              </button>
+            ) : null}
+          </div>
+        ) : search ? (
           <ProductResults
-            resultPage={paginateProducts(products, page)}
-            total={products.length}
+            resultPage={catalog.data}
+            total={catalog.data.total}
             onPageChange={setPage}
             onClear={clearSearch}
           />
         ) : (
-          <FeaturedProducts products={FEATURED_PRODUCTS} />
+          <FeaturedProducts products={catalog.data.items} />
         )}
       </div>
       <CatalogNavigation />

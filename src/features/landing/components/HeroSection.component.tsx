@@ -1,18 +1,20 @@
 import type { FC } from 'react';
 import { CategoryFilter } from '../../products/components/CategoryFilter.component';
 
-import { type ProductCategory } from '../../products/domain/Product';
+import type { CatalogCategory } from '../../products/domain/Catalog';
 
 interface HeroSectionProps {
+  categories: readonly CatalogCategory[];
   query: string;
-  activeCategories: readonly ProductCategory[];
+  activeCategories: readonly string[];
   onQueryChange: (query: string) => void;
   onSearch: () => void;
   onCategoriesClose: () => void;
-  onCategorySelect: (category: ProductCategory) => void;
+  onCategorySelect: (category: string) => void;
 }
 
 export const HeroSection: FC<HeroSectionProps> = ({
+  categories,
   query,
   activeCategories,
   onQueryChange,
@@ -70,6 +72,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
                 <input
                   id="product-search"
                   type="search"
+                  maxLength={128}
                   value={query}
                   onChange={(event) => onQueryChange(event.target.value)}
                   placeholder="Nombre, marca, categoría o SKU (ej. Paracetamol)..."
@@ -80,6 +83,7 @@ export const HeroSection: FC<HeroSectionProps> = ({
           </form>
 
           <CategoryFilter
+            categories={categories}
             selected={activeCategories}
             onToggle={onCategorySelect}
             onClose={onCategoriesClose}

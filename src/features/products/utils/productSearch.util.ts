@@ -42,10 +42,10 @@ const matchesSimilarWord = (term: string, word: string): boolean => {
   return previous[word.length] <= maxEdits;
 };
 
-export const searchProducts = (
-  products: readonly Product[],
+export const searchProducts = <T extends Product>(
+  products: readonly T[],
   { query, category, categories }: ProductSearch
-): readonly Product[] => {
+): readonly T[] => {
   const terms = normalizeSearch(query).split(' ').filter(Boolean);
 
   const candidates = products.filter(

@@ -26,3 +26,22 @@ it('accepts the public application identifier only and keeps monitoring disabled
   expect(parsed.VITE_BETTERSTACK_RUM_PILOT_ENABLED).toBe(false);
   expect(parsed.VITE_BETTERSTACK_RUM_PRIVACY_REVIEWED).toBe(false);
 });
+it.each([
+  'not-a-url',
+  'https://user:password@example.test/api',
+  'https://example.test/api?token=private',
+  'http://example.test/api',
+  'https://example.test/api#private',
+])('rejects unsafe API bases without exposing them', (url) => {
+  expect(() => validateClientEnvironment({ VITE_API_BASE_URL: url })).toThrow(
+    'Invalid client environment configuration.'
+  );
+});
+it('accepts a public HTTPS base or local development API', () => {
+  expect(
+    validateClientEnvironment({ VITE_API_BASE_URL: 'https://example.test/api' }).VITE_API_BASE_URL
+  ).toBe('https://example.test/api');
+  expect(
+    validateClientEnvironment({ VITE_API_BASE_URL: 'http://127.0.0.1:8081/api' }).VITE_API_BASE_URL
+  ).toBe('http://127.0.0.1:8081/api');
+});

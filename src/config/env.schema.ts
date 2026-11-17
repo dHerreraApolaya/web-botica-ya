@@ -15,7 +15,23 @@ export const rumEnvSchema = z.object({
 });
 
 export const envSchema = rumEnvSchema.extend({
-  VITE_API_BASE_URL: z.string().url().optional(),
+  VITE_API_BASE_URL: z
+    .url()
+    .pipe(
+      z.string().refine((value) => {
+        const url = new URL(value);
+        return (
+          !url.username &&
+          !url.password &&
+          !url.search &&
+          !url.hash &&
+          (url.protocol === 'https:' ||
+            (url.protocol === 'http:' &&
+              ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)))
+        );
+      })
+    )
+    .optional(),
   VITE_ENABLE_ANALYTICS: z
     .string()
     .transform((val) => val === 'true')

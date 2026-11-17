@@ -6,6 +6,8 @@ catalog contract. The developer verified `BY-0001` with five units from the exis
 `boticaya_dev` through Express; Java has been removed. Order reception is prepared
 but disabled by default while its schema and access are configured.
 
+The product listing now uses the separate Express catalog API through same-origin `/api`. For local proxy setup, endpoint contracts, approved scope and validation requirements, see [Catalog API integration](.specs/features/catalog-api-integration/catalog-api-integration.spec.md). Official product import is pending verified reuse permission and real commercial values; an empty API response stays empty.
+
 Frontend web application for **Botica Ya**, built with a strict **Anti-Vibe Coding** discipline (Spec-Driven Development, Test-Driven Development, Behavior-Driven Development) and optimized for seamless collaboration between human engineers and autonomous AI agents.
 
 ---

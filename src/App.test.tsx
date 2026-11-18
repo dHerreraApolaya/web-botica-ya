@@ -1,15 +1,39 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
 import { salesStore } from './features/sales/state/sales.store';
 import { useUserSession } from './features/user/state/userSession.store';
 import { LOCAL_PRODUCTS } from './features/products/data/products.data';
+
+beforeEach(() => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string) => {
+      if (url.endsWith('/logout')) return new Response(null, { status: 204 });
+      if (url.endsWith('/login'))
+        return new Response(
+          JSON.stringify({
+            accessToken: 'synthetic-access-token',
+            user: {
+              id: '00000000-0000-4000-8000-000000000001',
+              fullName: 'Usuario de prueba',
+              email: 'usuario0001@example.test',
+              phone: null,
+            },
+          }),
+          { status: 200 }
+        );
+      return new Response(JSON.stringify({ code: 'invalid-credentials' }), { status: 401 });
+    })
+  );
+});
 
 afterEach(() => {
   cleanup();
   salesStore.getState().reset();
   useUserSession.getState().signOut();
   window.history.replaceState({}, '', '/');
+  vi.unstubAllGlobals();
 });
 describe('sales route integration', () => {
   it('connects product additions and cart navigation', async () => {
@@ -67,6 +91,7 @@ describe('application routing', () => {
     expect(await screen.findByRole('heading', { name: 'Tu carrito' })).toBeInTheDocument();
     expect(salesStore.getState().cart).toEqual(cart);
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+    await screen.findByRole('link', { name: 'Ingresar' });
     expect(useUserSession.getState().user).toBeNull();
     expect(screen.getByRole('link', { name: 'Ingresar' })).toBeInTheDocument();
     expect(salesStore.getState().cart).toEqual(cart);

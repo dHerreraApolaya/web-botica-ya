@@ -47,14 +47,14 @@ export const CategoryFilter: FC<Props> = ({ selected, onToggle, onClose }) => {
     normalizeSearch(category).includes(normalizeSearch(filter))
   );
   return (
-    <div className="mt-4 text-left">
+    <div className="mt-4 text-center">
       <p className="mb-2 text-xs font-semibold text-text-muted">
         Explora por categoría · puedes elegir varias
       </p>
       <div className="flex min-w-0 items-start gap-2">
         <div
           ref={row}
-          className="flex min-w-0 flex-1 gap-2 overflow-x-auto sm:flex-wrap sm:overflow-visible"
+          className="flex min-w-0 flex-1 gap-2 overflow-x-auto sm:flex-wrap sm:justify-center sm:overflow-visible"
         >
           {SORTED_CATEGORIES.map(renderCategory)}
         </div>

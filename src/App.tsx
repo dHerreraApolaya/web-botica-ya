@@ -2,6 +2,7 @@ import { lazy, Suspense, type FC } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { LandingScreen } from './features/landing/screens/Landing.screen';
 import { MainLayout } from './layouts/MainLayout.layout';
+import { CartPersistence } from './features/sales/components/CartPersistence.component';
 
 const CartScreen = lazy(() => import('./features/sales/screens/Cart.screen'));
 const CheckoutScreen = lazy(() => import('./features/sales/screens/Checkout.screen'));
@@ -11,6 +12,7 @@ const UserAccessScreen = lazy(() => import('./features/user/screens/UserAccess.s
 const App: FC = () => (
   <BrowserRouter>
     <MainLayout>
+      {import.meta.env.DEV && import.meta.env.MODE !== 'test' && <CartPersistence />}
       <Suspense
         fallback={
           <p role="status" className="p-8 text-center text-text-muted">

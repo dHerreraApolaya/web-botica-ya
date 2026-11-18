@@ -4,8 +4,8 @@ import { accessFlowReducer, type AccessFlowState } from '../state/accessFlow.sta
 
 const ERROR_MESSAGES: Record<AccessErrorCode, string> = {
   'invalid-input': 'Revisa los datos del formulario.',
-  'invalid-credentials': 'No pudimos iniciar sesión con esos datos de prueba.',
-  'account-blocked': 'Esta cuenta de prueba está bloqueada. Usa otra cuenta.',
+  'invalid-credentials': 'El correo o la contraseña no son correctos.',
+  'account-blocked': 'Esta cuenta está bloqueada. Comunícate con la botica.',
   'email-exists': 'Este correo ya está registrado. Intenta iniciar sesión.',
   unavailable: 'No pudimos completar la solicitud. Inténtalo nuevamente.',
 };

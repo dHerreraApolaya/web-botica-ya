@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import UserAccessScreen from '../screens/UserAccess.screen';
 import { Header } from '@/components/ui/organisms/Header.component';
 import { createMockUserAdapter } from '../data/mockUser.adapter';
@@ -50,16 +50,28 @@ const fillRegistration = (email: string = 'new@example.test'): void => {
   fill('Confirmación de contraseña', 'test-input-only');
 };
 
+beforeEach(() => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string) =>
+      url.endsWith('/logout')
+        ? new Response(null, { status: 204 })
+        : new Response(JSON.stringify({ code: 'invalid-credentials' }), { status: 401 })
+    )
+  );
+});
+
 afterEach(() => {
   cleanup();
   useUserSession.getState().signOut();
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 describe('user access layouts', () => {
-  it('shows a clearly labeled simulation and toggles password visibility accessibly', () => {
+  it('shows account access and toggles password visibility accessibly', () => {
     renderAccess();
-    expect(screen.getByRole('heading', { name: 'Modo demostración' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tu cuenta de Botica Ya' })).toBeInTheDocument();
     fill('Contraseña', 'visible-input');
     const input = screen.getByLabelText('Contraseña', { exact: true });
     expect(input).toHaveAttribute('type', 'password');
@@ -100,14 +112,15 @@ describe('user access layouts', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Explorar productos' }));
     expect(screen.getByRole('heading', { name: 'Catálogo' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+    await screen.findByRole('link', { name: 'Ingresar' });
     expect(useUserSession.getState().user).toBeNull();
     fireEvent.click(screen.getByRole('link', { name: 'Ingresar' }));
     expect(screen.getByRole('form', { name: 'Iniciar sesión' })).toBeInTheDocument();
   });
 
   it.each([
-    ['unknown@example.test', 'No pudimos iniciar sesión'],
-    ['usuario0010@example.test', 'Esta cuenta de prueba está bloqueada'],
+    ['unknown@example.test', 'El correo o la contraseña no son correctos'],
+    ['usuario0010@example.test', 'Esta cuenta está bloqueada'],
   ])('handles %s and allows correcting the submission', async (email, message) => {
     renderAccess();
     fillLogin(email);
@@ -146,7 +159,7 @@ describe('user access layouts', () => {
       await screen.findByRole('heading', { name: '¡Ya iniciaste sesión!' })
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
-    expect(screen.getByRole('form', { name: 'Iniciar sesión' })).toBeInTheDocument();
+    expect(await screen.findByRole('form', { name: 'Iniciar sesión' })).toBeInTheDocument();
     fillLogin();
     await submitForm('Iniciar sesión');
     expect(
@@ -180,7 +193,7 @@ describe('user access layouts', () => {
     fillRegistration();
     await submitForm('Crear cuenta');
     expect(
-      await screen.findByRole('heading', { name: '¡Tu cuenta de prueba está lista!' })
+      await screen.findByRole('heading', { name: '¡Tu cuenta está lista!' })
     ).toBeInTheDocument();
     expect(useUserSession.getState().user).toBeNull();
     fireEvent.click(screen.getByRole('link', { name: 'Ir a iniciar sesión' }));
@@ -201,7 +214,7 @@ describe('user access layouts', () => {
     fill('Correo electrónico', 'unique@example.test');
     await submitForm('Crear cuenta');
     expect(
-      await screen.findByRole('heading', { name: '¡Tu cuenta de prueba está lista!' })
+      await screen.findByRole('heading', { name: '¡Tu cuenta está lista!' })
     ).toBeInTheDocument();
   });
 

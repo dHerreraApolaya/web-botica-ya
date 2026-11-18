@@ -32,10 +32,9 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ facade }) => {
         role="status"
         className="space-y-4 rounded-lg bg-primary-surface p-6 text-primary-surface-text"
       >
-        <h2 className="text-xl font-bold">¡Tu cuenta de prueba está lista!</h2>
+        <h2 className="text-xl font-bold">¡Tu cuenta está lista!</h2>
         <p className="break-words">
-          Puedes iniciar sesión con {registeredEmail}. La cuenta se conserva solo hasta recargar la
-          página.
+          Tu cuenta se ha creado. Puedes iniciar sesión con {registeredEmail}.
         </p>
         <Link
           to="/iniciar-sesion"

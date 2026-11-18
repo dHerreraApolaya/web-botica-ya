@@ -35,17 +35,14 @@ const UserAccessScreen: FC<UserAccessScreenProps> = ({ mode, facade = userAccess
         Tu espacio en Botica Ya para acompañarte en el cuidado de tu salud y bienestar.
       </p>
       <div className="mt-8 rounded-lg bg-primary-surface p-6 text-sm text-primary-surface-text">
-        <h2 className="font-bold">Modo demostración</h2>
+        <h2 className="font-bold">Tu cuenta de Botica Ya</h2>
         <p className="mt-2">
-          Este acceso es una simulación. Usa datos ficticios; no ingreses tu contraseña personal.
+          Crea tu cuenta para acceder a Botica Ya con tu correo y una contraseña personal.
         </p>
         <p className="mt-3 break-words">
-          Cuenta de prueba: <strong>usuario0001@example.test</strong>
+          Usa un correo que puedas recordar para tus próximos ingresos.
         </p>
-        <p className="mt-2">
-          Para la prueba puedes escribir cualquier contraseña de 8 a 128 caracteres. No se verifica
-          ni se guarda.
-        </p>
+        <p className="mt-2">Elige una contraseña de 8 a 128 caracteres y no la compartas.</p>
       </div>
     </div>
     <div className="min-w-0 rounded-xl border border-border bg-surface p-8 shadow-card max-sm:p-5">
@@ -54,7 +51,7 @@ const UserAccessScreen: FC<UserAccessScreenProps> = ({ mode, facade = userAccess
       </h2>
       <p className="mb-6 mt-2 text-sm text-text-muted">
         {mode === 'login'
-          ? 'Ingresa tus datos de prueba para continuar.'
+          ? 'Ingresa tu correo y contraseña para continuar.'
           : 'Solo necesitamos tus datos básicos para comenzar.'}
       </p>
       {mode === 'login' ? <LoginForm facade={facade} /> : <RegistrationForm facade={facade} />}

@@ -35,7 +35,7 @@ export const LoginForm: FC<LoginFormProps> = ({ facade }) => {
         className="space-y-4 rounded-lg bg-primary-surface p-6 text-primary-surface-text"
       >
         <h2 className="text-xl font-bold">¡Ya iniciaste sesión!</h2>
-        <p>Tu sesión de demostración está activa hasta que recargues la página.</p>
+        <p>Tu sesión de Botica Ya está activa.</p>
         <Link
           to="/"
           className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 py-3 font-semibold text-primary-contrast"
